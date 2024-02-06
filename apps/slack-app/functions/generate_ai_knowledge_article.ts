@@ -1,5 +1,7 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 
+const GENERATE_ARTICLE_BUTTON_ACTION_ID = "generate-kav-action-id";
+
 /**
  * Functions are reusable building blocks of automation that accept
  * inputs, perform calculations, and provide outputs. Functions can
@@ -46,22 +48,22 @@ export const GenerateAiKnowledgeArticle = DefineFunction({
     },
     required: ["message_ts"],
   },
-  output_parameters: {
-    properties: {
-      // channel: {
-      //   type: Schema.slack.types.channel_id,
-      // },
-      // chatConversationId: {
-      //   type: Schema.types.string,
-      //   description: "ID of the ChatConversation__c record",
-      // },
-      message_ts: {
-        type: Schema.types.string,
-        description: "Message timestmapt",
-      },
-    },
-    required: ["message_ts"],
-  },
+  // output_parameters: {
+  //   properties: {
+  //     // channel: {
+  //     //   type: Schema.slack.types.channel_id,
+  //     // },
+  //     // chatConversationId: {
+  //     //   type: Schema.types.string,
+  //     //   description: "ID of the ChatConversation__c record",
+  //     // },
+  //     message_ts: {
+  //       type: Schema.types.string,
+  //       description: "Message timestamp",
+  //     },
+  //   },
+  //   required: ["message_ts"],
+  // },
 });
 
 /**
@@ -87,9 +89,9 @@ export default SlackFunction(
           type: "button",
           text: {
             type: "plain_text",
-            text: "Approve",
+            text: "✨ Generate AI Article",
           },
-          action_id: "APPROVE_ID",
+          action_id: GENERATE_ARTICLE_BUTTON_ACTION_ID,
           style: "primary",
         },
       ],
@@ -109,9 +111,72 @@ export default SlackFunction(
       console.log("Error during request chat.postMessage!", msgResponse.error);
     }
 
-    // Return all inputs as outputs for consumption in subsequent functions
+    // IMPORTANT! Set `completed` to false in order to keep the interactivity
+    // points (the approve/deny buttons) "alive"
+    // We will set the function's complete state in the button handlers below.
     return {
-      outputs: { message_ts },
+      completed: false,
     };
   },
-);
+)
+  .addBlockActionsHandler(
+    // listen for interactions with components with the following action_ids
+    GENERATE_ARTICLE_BUTTON_ACTION_ID,
+    // interactions with the above two action_ids get handled by the function below
+    async function ({ action, body, client }) {
+      console.log("Incoming action handler invocation", action);
+      // console.log(body);
+
+      // const approved = action.action_id === APPROVE_ID;
+      const parentMessageTs = body.container.message_ts;
+
+      const msgResponse = await client.chat.postMessage({
+        channel: "C06FQR45E7R", // TODO make configurable
+        thread_ts: parentMessageTs,
+        blocks: [{
+          type: "context",
+          elements: [
+            {
+              type: "mrkdwn",
+              text: `Generating...`,
+            },
+          ],
+        }],
+        text: `Generating the Knowledge Article...`,
+      });
+      if (!msgResponse.ok) {
+        console.log(
+          "Error during requester update chat.postMessage!",
+          msgResponse.error,
+        );
+      }
+      // // Update the manager's message to remove the buttons and reflect the approval
+      // // state. Nice little touch to prevent further interactions with the buttons
+      // // after one of them were clicked.
+      // const msgUpdate = await client.chat.update({
+      //   channel: body.container.channel_id,
+      //   ts: body.container.message_ts,
+      //   blocks: [
+      //     {
+      //       type: "context",
+      //       elements: [
+      //         {
+      //           type: "mrkdwn",
+      //           text: `Done`,
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // });
+      // if (!msgUpdate.ok) {
+      //   console.log("Error during manager chat.update!", msgUpdate.error);
+      // }
+
+      // And now we can mark the function as 'completed' - which is required as
+      // we explicitly marked it as incomplete in the main function handler.
+      await client.functions.completeSuccess({
+        function_execution_id: body.function_data.execution_id,
+        outputs: {},
+      });
+    },
+  );

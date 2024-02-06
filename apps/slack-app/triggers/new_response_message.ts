@@ -24,19 +24,19 @@ const sendMessage: Trigger<typeof SendMessageWorkflow.definition> = {
       version: 1,
       root: {
         operator: "AND",
-        inputs: [{
-          // ignore bot message replies, especially from our app
-          operator: "NOT",
-          inputs: [{
-            statement: "{{data.user_id}} == null",
-          }],
-        }, {
-          // only process threaded replies
-          operator: "NOT",
-          inputs: [{
-            statement: "{{data.thread_ts}} == null",
-          }],
-        }],
+        inputs: [
+          {
+            // ignore bot message replies, especially from our app
+            statement: "{{data.app_id}} == null",
+          },
+          {
+            // only process threaded replies
+            operator: "NOT",
+            inputs: [{
+              statement: "{{data.thread_ts}} == null",
+            }],
+          },
+        ],
       },
     },
   },
