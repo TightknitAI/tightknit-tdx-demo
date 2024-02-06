@@ -1,8 +1,10 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
 import SalesforceAgentChatsDatastore from "./datastores/salesforce_agent_chats.ts";
+import { CreateAiKnowledgeArticle } from "./functions/create_ai_knowledge_article.ts";
 import { PostMessageOrThreadedReply } from "./functions/post_message_or_reply.ts";
 import { SendMessageToClient } from "./functions/send_message_to_client.ts";
 import ReceiveMessageWorkflow from "./workflows/receive_message.ts";
+import ResolveTicketWorkflow from "./workflows/resolve_ticket.ts";
 import SendMessageWorkflow from "./workflows/send_message.ts";
 
 /**
@@ -14,10 +16,15 @@ export default Manifest({
   name: "Tightknit TDX Demo",
   description: "A basic sample that demonstrates issue submission to channel",
   icon: "assets/default_new_app_icon.png",
-  workflows: [ReceiveMessageWorkflow, SendMessageWorkflow],
+  workflows: [
+    ReceiveMessageWorkflow,
+    SendMessageWorkflow,
+    ResolveTicketWorkflow,
+  ],
   functions: [
     PostMessageOrThreadedReply,
     SendMessageToClient,
+    CreateAiKnowledgeArticle,
   ],
   outgoingDomains: [
     "tightknit.requestcatcher.com",
@@ -32,5 +39,6 @@ export default Manifest({
     "groups:history",
     "datastore:read",
     "datastore:write",
+    "reactions:read",
   ],
 });

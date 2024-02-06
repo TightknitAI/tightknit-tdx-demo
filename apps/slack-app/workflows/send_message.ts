@@ -1,5 +1,4 @@
 // import { Connectors } from "deno-slack-hub/mod.ts";
-import { Connectors } from "deno-slack-hub/mod.ts";
 
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
 import { SendMessageToClient } from "../functions/send_message_to_client.ts";
@@ -29,35 +28,32 @@ const SendMessageWorkflow = DefineWorkflow({
   },
 });
 
-const messageLookupStep = SendMessageWorkflow.addStep(
-  SendMessageToClient,
-  {
-    message: SendMessageWorkflow.inputs.text,
-    thread_ts: SendMessageWorkflow.inputs.thread_ts,
-  },
-);
+const messageLookupStep = SendMessageWorkflow.addStep(SendMessageToClient, {
+  message: SendMessageWorkflow.inputs.text,
+  thread_ts: SendMessageWorkflow.inputs.thread_ts,
+});
 
 // console.log("messageLookupStep", messageLookupStep);
 
 // const chatConversationId = messageLookupStep.outputs.chatConversationId;
 // console.log("Connectors step!");
-SendMessageWorkflow.addStep(
-  Connectors.Salesforce.functions.CreateRecord,
-  {
-    salesforce_object_name: "ChatMessage__c",
-    //Metadata to attach to this record, as an array of keys and their values values. Each key should be associated with the API name of a field you want to provide a value for.
-    metadata: {
-      "Chat_Conversation__c": "a01Hs00001sDSV9",
-      // messageLookupStep.outputs.chatConversationId,
-      "Body__c": "FROM SLACK",
-      // messageLookupStep.outputs.message,
-      // TODO: fix these
-      "Sender_Name__c": "Agent",
-      "Sent_At__c": new Date().toISOString(),
-    },
-    salesforce_access_token: { credential_source: "END_USER" },
-  },
-);
+// SendMessageWorkflow.addStep(
+//   Connectors.Salesforce.functions.CreateRecord,
+//   {
+//     salesforce_object_name: "ChatMessage__c",
+//     //Metadata to attach to this record, as an array of keys and their values values. Each key should be associated with the API name of a field you want to provide a value for.
+//     metadata: {
+//       "Chat_Conversation__c": "a01Hs00001sDSV9",
+//       // messageLookupStep.outputs.chatConversationId,
+//       "Body__c": "FROM SLACK",
+//       // messageLookupStep.outputs.message,
+//       // TODO: fix these
+//       "Sender_Name__c": "Agent",
+//       "Sent_At__c": new Date().toISOString(),
+//     },
+//     salesforce_access_token: { credential_source: "END_USER" },
+//   },
+// );
 // SendMessageWorkflow.addStep(
 //   Connectors.GoogleSheets.functions.AddSpreadsheetRow,
 //   {
