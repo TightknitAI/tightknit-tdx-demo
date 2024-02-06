@@ -1,6 +1,6 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
 import SalesforceAgentChatsDatastore from "./datastores/salesforce_agent_chats.ts";
-import { CreateAiKnowledgeArticle } from "./functions/create_ai_knowledge_article.ts";
+import { GenerateAiKnowledgeArticle } from "./functions/generate_ai_knowledge_article.ts";
 import { PostMessageOrThreadedReply } from "./functions/post_message_or_reply.ts";
 import { SendMessageToClient } from "./functions/send_message_to_client.ts";
 import ReceiveMessageWorkflow from "./workflows/receive_message.ts";
@@ -24,7 +24,7 @@ export default Manifest({
   functions: [
     PostMessageOrThreadedReply,
     SendMessageToClient,
-    CreateAiKnowledgeArticle,
+    GenerateAiKnowledgeArticle,
   ],
   outgoingDomains: [
     "tightknit.requestcatcher.com",

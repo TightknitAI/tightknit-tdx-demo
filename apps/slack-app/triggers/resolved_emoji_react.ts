@@ -1,4 +1,8 @@
-import { TriggerEventTypes, TriggerTypes } from "deno-slack-api/mod.ts";
+import {
+  TriggerContextData,
+  TriggerEventTypes,
+  TriggerTypes,
+} from "deno-slack-api/mod.ts";
 import { Trigger } from "deno-slack-sdk/types.ts";
 import ResolveTicketWorkflow from "../workflows/resolve_ticket.ts";
 
@@ -31,7 +35,7 @@ const resolvedEmojiReactAdded: Trigger<
     //   value: "REACTION!",
     // },
     message_ts: {
-      value: "1234567890.123456",
+      value: TriggerContextData.Event.ReactionAdded.message_ts,
     },
     // user_id: {
     //   value: TriggerContextData.Event.ReactionAdded.user_id,

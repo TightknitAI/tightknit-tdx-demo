@@ -1,5 +1,5 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
-import { CreateAiKnowledgeArticle } from "../functions/create_ai_knowledge_article.ts";
+import { GenerateAiKnowledgeArticle } from "../functions/generate_ai_knowledge_article.ts";
 
 /**
  * A workflow is a set of steps that are executed in order.
@@ -20,7 +20,7 @@ const ResolveTicketWorkflow = DefineWorkflow({
   },
 });
 
-ResolveTicketWorkflow.addStep(CreateAiKnowledgeArticle, {
+ResolveTicketWorkflow.addStep(GenerateAiKnowledgeArticle, {
   message_ts: ResolveTicketWorkflow.inputs.message_ts,
 });
 

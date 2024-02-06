@@ -6,12 +6,12 @@ import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
  * be used independently or as steps in workflows.
  * https://api.slack.com/automation/functions/custom
  */
-export const CreateAiKnowledgeArticle = DefineFunction({
-  callback_id: "create_ai_knowledge_article",
-  title: "Create AI Knowledge Article",
+export const GenerateAiKnowledgeArticle = DefineFunction({
+  callback_id: "generate_ai_knowledge_article",
+  title: "Generate AI Knowledge Article",
   description:
     "Gives the agent the option to capture the conversation in an AI-generated Knowledge Article (draft)",
-  source_file: "functions/create_ai_knowledge_article.ts",
+  source_file: "functions/generate_ai_knowledge_article.ts",
   input_parameters: {
     properties: {
       // channel: {
@@ -71,13 +71,43 @@ export const CreateAiKnowledgeArticle = DefineFunction({
  * https://api.slack.com/automation/functions/custom
  */
 export default SlackFunction(
-  CreateAiKnowledgeArticle,
+  GenerateAiKnowledgeArticle,
   async ({ inputs, client }) => {
     const {
       message_ts,
     } = inputs;
 
     console.log("CREATE AI ARTICLE", message_ts);
+
+    const blocks = [{
+      "type": "actions",
+      "block_id": "generate-knowledge-article-button",
+      "elements": [
+        {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "Approve",
+          },
+          action_id: "APPROVE_ID",
+          style: "primary",
+        },
+      ],
+    }];
+
+    const msgResponse = await client.chat.postMessage({
+      channel: "C06FQR45E7R", // TODO make configurable
+      thread_ts: message_ts,
+      blocks,
+      // Fallback text to use when rich media can't be displayed (i.e. notifications) as well as for screen readers
+      text:
+        "Do you want to generate a new Salesforce Knowledge article based on this conversation?",
+      icon_emoji: ":sparkles:",
+    });
+
+    if (!msgResponse.ok) {
+      console.log("Error during request chat.postMessage!", msgResponse.error);
+    }
 
     // Return all inputs as outputs for consumption in subsequent functions
     return {
