@@ -123,9 +123,11 @@ export default SlackFunction(
     // listen for interactions with components with the following action_ids
     GENERATE_ARTICLE_BUTTON_ACTION_ID,
     // interactions with the above two action_ids get handled by the function below
-    async function ({ action, body, client }) {
+    async function ({ action, body, client, env }) {
       console.log("Incoming action handler invocation", action);
       // console.log(body);
+      const myEnvVar = env["OPENAI_API_KEY"];
+      console.log("ENV", myEnvVar);
 
       // const approved = action.action_id === APPROVE_ID;
       const parentMessageTs = body.container.message_ts;
