@@ -1,0 +1,26 @@
+<template>
+  <lightning-card title={title} icon-name="standard:prompt">
+    <div class="slds-p-around_medium">
+      <template if:true={isLoading}>
+        <div class="spinner-container slds-p-vertical_small">
+          <lightning-spinner
+            alternative-text="Loading"
+            size="medium"
+          ></lightning-spinner>
+        </div>
+      </template>
+
+      <template if:true={showArticleSearch}>
+        <!-- Display suggested articles -->
+        <c-question-box onescalate={handleEscalate}></c-question-box>
+      </template>
+      <template if:true={showChat}>
+        <!-- Display agent chat -->
+        <c-support-chat
+          chat-conversation-id={chatConversationId}
+          slack-app-webhook-url={slackAppWebhookUrl}
+        ></c-support-chat>
+      </template>
+    </div>
+  </lightning-card>
+</template>

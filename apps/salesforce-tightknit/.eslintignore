@@ -1,0 +1,4 @@
+**/lwc/**/*.js
+**/aura/**/*.auradoc
+**/aura/**/*.js
+.sfdx

@@ -1,0 +1,11 @@
+{
+  "apps": {
+    "T01NWNWNR8V": {
+      "app_id": "A06G7K56B1Q",
+      "IsDev": false,
+      "team_domain": "tightknit-internal",
+      "team_id": "T01NWNWNR8V"
+    }
+  },
+  "default": "tightknit-internal"
+}

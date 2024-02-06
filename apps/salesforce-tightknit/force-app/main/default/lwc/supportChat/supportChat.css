@@ -1,0 +1,58 @@
+.spinner-container {
+  position: relative;
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+
+.message-sender {
+  font-size: 1.1rem;
+}
+
+.message-date {
+  font-weight: 300;
+}
+
+.messages-container {
+  max-height: 25rem;
+  overflow-y: scroll;
+  background-color: #eee;
+  position: relative;
+}
+
+.initial-query {
+  margin-left: 2px;
+}
+
+.message-block {
+  max-width: 90%;
+  display: flex;
+}
+
+.message-block.from-my-user {
+  background-color: #edfff3;
+}
+.message-block.from-other-user {
+  background-color: #e7f1ff;
+}
+
+.message-block:hover {
+  opacity: 95%;
+}
+
+.message-user-photo {
+  border-radius: 0.8rem;
+  max-width: 5rem;
+  max-height: 5rem;
+}
+
+.align-right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* .align-left {
+  width: 80%;
+  margin-left: 0;
+  margin-right: auto;
+} */

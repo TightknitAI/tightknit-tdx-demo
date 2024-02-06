@@ -1,0 +1,65 @@
+<template>
+  <div class="slds-p-around_medium">
+    <div>
+      <lightning-input
+        label="Search"
+        placeholder="Ask a question"
+        value={searchTerm}
+        onchange={handleSearchTermChange}
+        onkeypress={handleSearchInputKeyPress}
+      ></lightning-input>
+      <lightning-button
+        label="Search"
+        onclick={handleSearch}
+        variant="brand"
+      ></lightning-button>
+    </div>
+
+    <template if:true={isLoading}>
+      <div class="spinner-container slds-p-vertical_small">
+        <lightning-spinner
+          alternative-text="Loading"
+          size="medium"
+        ></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:true={isDataLoaded}>
+      <div class="slds-p-top_medium">
+        <template if:true={searchResults.length}>
+          <ul class="slds-list_horizontal">
+            <template for:each={searchResults} for:item="result">
+              <li key={result.title} class="slds-p-right_medium">
+                <p><b>{result.title}</b></p>
+                <lightning-formatted-rich-text
+                  value={result.snippet}
+                ></lightning-formatted-rich-text>
+                <p>
+                  <a
+                    target="_blank"
+                    onclick={handleReadMore}
+                    data-urlname={result.urlName}
+                    >Read More →</a
+                  >
+                </p>
+              </li>
+            </template>
+          </ul>
+        </template>
+
+        <template if:false={searchResults.length}>
+          <p>No results found.</p>
+        </template>
+
+        <div class="slds-m-vertical_medium">
+          <lightning-button
+            label="Talk to Support"
+            icon-name="utility:agent_session"
+            onclick={handleEscalateCase}
+            variant="brand-outline"
+          ></lightning-button>
+        </div>
+      </div>
+    </template>
+  </div>
+</template>

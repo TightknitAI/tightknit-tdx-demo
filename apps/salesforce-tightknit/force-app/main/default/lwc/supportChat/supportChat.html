@@ -1,0 +1,59 @@
+<template>
+  <div class="container">
+    <template if:true={isDataLoaded}>
+      <!-- <lightning-card> -->
+      <div class="messages-container slds-box">
+        <p class="slds-m-vertical_small slds-align_absolute-center">
+          <b>You asked: <i class="initial-query">{initialQuery}</i></b>
+        </p>
+        <p class="slds-m-vertical_small slds-align_absolute-center">
+          -- This is the start of your conversation --
+        </p>
+        <template for:each={messages} for:item="message">
+          <div key={message.Id} class={message.messageBlockClass}>
+            <template if:true={message.Sender_Photo_URL__c}
+              ><img
+                class="message-user-photo slds-m-right_medium"
+                src={message.Sender_Photo_URL__c}
+            /></template>
+            <div>
+              <div class="slds-text-title_bold message-sender">
+                {message.Sender_Name__c}
+              </div>
+              <div class="message-date">{message.displayDate}</div>
+              <div class="message-body slds-m-top_x-small">
+                <lightning-formatted-rich-text
+                  value={message.Body__c}
+                ></lightning-formatted-rich-text>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <!-- </lightning-card> -->
+      <div class="input-container slds-box">
+        <div class="slds-grid slds-wrap">
+          <div class="slds-col">
+            <lightning-input
+              label="Search"
+              variant="label-hidden"
+              placeholder="Send a message"
+              value={messageToSend}
+              onchange={handleMessageToSendChange}
+              onkeypress={handleMessageInputKeyPress}
+            ></lightning-input>
+          </div>
+          <div class="slds-col slds-grow-none slds-m-left_small">
+            <lightning-button
+              label="Send"
+              onclick={handleSendNewMessage}
+              variant="brand"
+              class="slds-float_right"
+            ></lightning-button>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template if:false={isDataLoaded}>Loading Chat Support...</template>
+  </div>
+</template>
