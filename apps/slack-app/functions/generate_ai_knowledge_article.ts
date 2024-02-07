@@ -211,7 +211,7 @@ export default SlackFunction(
             {
               type: "mrkdwn",
               text:
-                `_Do you want to create a Draft of this article in Salesforce Knowledge?_
+                `_Do you want to create a draft of this article in Salesforce Knowledge?_
                 ${createKnowledgeWorkflowLink}\nClick <${createKnowledgeWorkflowLink}|here>`,
             },
           ],
@@ -220,7 +220,7 @@ export default SlackFunction(
           "text": {
             "type": "mrkdwn",
             "text":
-              "Do you want to create a Draft of this article in Salesforce Knowledge?",
+              "Do you want to create a draft of this article in Salesforce Knowledge?",
           },
           "accessory": {
             "type": "button",

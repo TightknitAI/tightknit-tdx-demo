@@ -107,6 +107,28 @@ export default SlackFunction(
     }
 
     let message_ts = getResponse.item.message_ts;
+    // TODO change this to your own workflow trigger link
+    const replyWebhookLink =
+      "https://slack.com/shortcuts/Ft06HKR8ELHK/a2793c55ddb9fb9f99ae54ae365aadbe";
+    const replyWorkflowTriggerBlocks = [{
+      type: "divider",
+    }, {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "_Send reply to external chat_",
+      },
+      "accessory": {
+        "type": "button",
+        "text": {
+          "type": "plain_text",
+          "text": "Reply",
+          "emoji": true,
+        },
+        // webhook URL to trigger the reply_to_external_chat_workflow
+        "url": replyWebhookLink,
+      },
+    }];
 
     // 2. If not tracked, create a new conversation in the datastore
     // and send a new message in channel
@@ -127,30 +149,7 @@ export default SlackFunction(
               "text": formattedMessage,
             },
           },
-          {
-            type: "divider",
-          },
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": "_Send reply to external chat_",
-            },
-            "accessory": {
-              "type": "button",
-              "text": {
-                "type": "plain_text",
-                "text": "Reply",
-                "emoji": true,
-              },
-              // "value": "click_me_123",
-              // "url": "https://google.com",
-              // "action_id": "button-action",
-              // webhook URL to trigger the reply_to_external_chat_workflow
-              "url":
-                "https://slack.com/shortcuts/Ft06HKR8ELHK/a2793c55ddb9fb9f99ae54ae365aadbe",
-            },
-          },
+          ...replyWorkflowTriggerBlocks,
         ],
       });
       console.log("chatPostMessageResponse", chatPostMessageResponse);
@@ -184,11 +183,21 @@ export default SlackFunction(
       // 3. If tracked, send a threaded reply to the message associated with the conversation
       const chatPostMessageResponse = await client.chat.postMessage({
         channel,
-        thread_ts: message_ts,
-        text: formattedMessage,
         username: postAsUser && authorUsername ? authorUsername : undefined,
         icon_url: postAsUser && authorPhotoUrl ? authorPhotoUrl : undefined,
         icon_emoji: !postAsUser && iconEmoji ? iconEmoji : undefined,
+        thread_ts: message_ts,
+        text: formattedMessage,
+        blocks: [
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": formattedMessage,
+            },
+          },
+          ...replyWorkflowTriggerBlocks,
+        ],
       });
       if (!chatPostMessageResponse || !chatPostMessageResponse.ok) {
         const postErrorMsg =

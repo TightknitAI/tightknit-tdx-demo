@@ -85,8 +85,24 @@ export default SlackFunction(
     //   completed: false,
     // };
 
+    console.log("RETURNING OUTPUT AT END OF FUNC");
+    // return {
+    //   outputs: { message: "TODO" },
+    // };
     return {
-      outputs: { message: "TODO" },
+      // To continue with this interaction, return false for the completion
+      completed: false,
     };
   },
-);
+)
+  .addViewSubmissionHandler(
+    "chat-input-modal", // The callback_id of the modal
+    async ({ inputs, client, body }) => {
+      console.log("VIEW SUBMISSION HANDLER");
+
+      return {
+        completed: true,
+        outputs: { message: "from addViewSubmissionHandler" },
+      };
+    },
+  );

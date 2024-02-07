@@ -2,7 +2,7 @@
 
 import { Connectors } from "deno-slack-hub/mod.ts";
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
-import { OpenModalChatInput } from "../functions/open_modal_chat_input.ts";
+import { GetExternalChatInfo } from "../functions/get_external_chat_info.ts";
 
 /**
  * A workflow is a set of steps that are executed in order.
@@ -45,24 +45,48 @@ const ReplyToExternalChatWorkflow = DefineWorkflow({
   },
 });
 
-const chatReplyStep = ReplyToExternalChatWorkflow.addStep(
-  OpenModalChatInput,
+// const chatReplyStep = ReplyToExternalChatWorkflow.addStep(
+//   OpenModalChatInput,
+//   {
+//     interactivity: ReplyToExternalChatWorkflow.inputs.interactivity,
+//     user_id: ReplyToExternalChatWorkflow.inputs.user_id,
+//   },
+// );
+
+// console.log("chatReplyStep", chatReplyStep);
+
+const inputForm = ReplyToExternalChatWorkflow.addStep(
+  Schema.slack.functions.OpenForm,
   {
+    title: "Reply to External Chat",
     interactivity: ReplyToExternalChatWorkflow.inputs.interactivity,
-    user_id: ReplyToExternalChatWorkflow.inputs.user_id,
+    submit_label: "Send",
+    fields: {
+      elements: [
+        {
+          name: "messageInput",
+          title: "Message",
+          type: Schema.types.string,
+          long: true,
+        },
+      ],
+      required: ["messageInput"],
+    },
   },
 );
 
-// // giphy test
-// const gif = ReplyToExternalChatWorkflow.addStep(
-//   Connectors.Giphy.functions.GetRandomGif,
-//   {
-//     rating: "g",
-//   },
-// );
+const externalChatInfo = ReplyToExternalChatWorkflow.addStep(
+  GetExternalChatInfo,
+  {
+    user_id: ReplyToExternalChatWorkflow.inputs.user_id,
+    channel_id: ReplyToExternalChatWorkflow.inputs.channel_id,
+    message_ts: ReplyToExternalChatWorkflow.inputs.message_ts,
+  },
+);
+
 // ReplyToExternalChatWorkflow.addStep(Schema.slack.functions.SendMessage, {
-//   channel_id: "C06FQR45E7R",
-//   message: `GIF image:\n${gif.outputs.gif_title_url}`,
+//   channel_id: ReplyToExternalChatWorkflow.inputs.channel_id,
+//   message: inputForm.outputs.fields.messageInput,
 // });
 
 ReplyToExternalChatWorkflow.addStep(
@@ -71,16 +95,31 @@ ReplyToExternalChatWorkflow.addStep(
     salesforce_object_name: "ChatMessage__c",
     //Metadata to attach to this record, as an array of keys and their values values. Each key should be associated with the API name of a field you want to provide a value for.
     metadata: {
-      "Chat_Conversation__c": "a01Hs00001sDSV9",
-      // messageLookupStep.outputs.chatConversationId,
-      "Body__c": "FROM ReplyToExternalChatWorkflow",
-      // messageLookupStep.outputs.message,
+      "Chat_Conversation__c": externalChatInfo.outputs.chatConversationId,
+      "Body__c": inputForm.outputs.fields.messageInput,
       // TODO: fix these
-      "Sender_Name__c": "Agent",
-      "Sent_At__c": new Date().toISOString(),
+      "Sender_Name__c": externalChatInfo.outputs.senderName,
+      "Sender_Photo_URL__c": externalChatInfo.outputs.senderPhotoUrl,
+      "Sent_At__c": new Date().toISOString(), // now
     },
     salesforce_access_token: { credential_source: "END_USER" },
   },
 );
+
+// ReplyToExternalChatWorkflow.addStep(
+//   Connectors.Salesforce.functions.CreateRecord,
+//   {
+//     salesforce_object_name: "ChatMessage__c",
+//     //Metadata to attach to this record, as an array of keys and their values values. Each key should be associated with the API name of a field you want to provide a value for.
+//     metadata: {
+//       "Chat_Conversation__c": "a01Hs00001sDSV9",
+//       "Body__c": inputForm.outputs.fields.messageInput,
+//       // TODO: fix these
+//       "Sender_Name__c": "Agent",
+//       "Sent_At__c": new Date().toISOString(), // now
+//     },
+//     salesforce_access_token: { credential_source: "END_USER" },
+//   },
+// );
 
 export default ReplyToExternalChatWorkflow;
