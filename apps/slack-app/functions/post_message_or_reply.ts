@@ -115,10 +115,43 @@ export default SlackFunction(
       const chatPostMessageResponse = await client.chat.postMessage({
         channel,
         thread_ts: message_ts,
-        text: formattedMessage,
         username: postAsUser && authorUsername ? authorUsername : undefined,
         icon_url: postAsUser && authorPhotoUrl ? authorPhotoUrl : undefined,
         icon_emoji: !postAsUser && iconEmoji ? iconEmoji : undefined,
+        text: formattedMessage,
+        blocks: [
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": formattedMessage,
+            },
+          },
+          {
+            type: "divider",
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "_Send reply to external chat_",
+            },
+            "accessory": {
+              "type": "button",
+              "text": {
+                "type": "plain_text",
+                "text": "Reply",
+                "emoji": true,
+              },
+              // "value": "click_me_123",
+              // "url": "https://google.com",
+              // "action_id": "button-action",
+              // webhook URL to trigger the reply_to_external_chat_workflow
+              "url":
+                "https://slack.com/shortcuts/Ft06HKR8ELHK/a2793c55ddb9fb9f99ae54ae365aadbe",
+            },
+          },
+        ],
       });
       console.log("chatPostMessageResponse", chatPostMessageResponse);
       if (!chatPostMessageResponse || !chatPostMessageResponse.ok) {

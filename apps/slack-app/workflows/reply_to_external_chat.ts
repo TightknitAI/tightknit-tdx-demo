@@ -53,17 +53,17 @@ const chatReplyStep = ReplyToExternalChatWorkflow.addStep(
   },
 );
 
-// giphy test
-const gif = ReplyToExternalChatWorkflow.addStep(
-  Connectors.Giphy.functions.GetRandomGif,
-  {
-    rating: "g",
-  },
-);
-ReplyToExternalChatWorkflow.addStep(Schema.slack.functions.SendMessage, {
-  channel_id: "C06FQR45E7R",
-  message: `GIF image:\n${gif.outputs.gif_title_url}`,
-});
+// // giphy test
+// const gif = ReplyToExternalChatWorkflow.addStep(
+//   Connectors.Giphy.functions.GetRandomGif,
+//   {
+//     rating: "g",
+//   },
+// );
+// ReplyToExternalChatWorkflow.addStep(Schema.slack.functions.SendMessage, {
+//   channel_id: "C06FQR45E7R",
+//   message: `GIF image:\n${gif.outputs.gif_title_url}`,
+// });
 
 ReplyToExternalChatWorkflow.addStep(
   Connectors.Salesforce.functions.CreateRecord,

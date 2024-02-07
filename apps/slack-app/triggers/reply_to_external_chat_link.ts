@@ -16,7 +16,6 @@ const replyToExternalChat: Trigger<
   description: "Reply to external chat (link)",
   workflow: "#/workflows/reply_to_external_chat_workflow",
   inputs: {
-    // interactivity is necessary for opening a modal
     interactivity: { value: TriggerContextData.Shortcut.interactivity },
     message_ts: {
       value: TriggerContextData.Shortcut.message_ts,

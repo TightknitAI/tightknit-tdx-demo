@@ -4,7 +4,7 @@ import { GenerateAiKnowledgeArticle } from "./functions/generate_ai_knowledge_ar
 import { OpenModalChatInput } from "./functions/open_modal_chat_input.ts";
 import { PostMessageOrThreadedReply } from "./functions/post_message_or_reply.ts";
 import { SendMessageToClient } from "./functions/send_message_to_client.ts";
-import ReceiveMessageWorkflow from "./workflows/receive_message.ts";
+import ReceiveExternalMessageWorkflow from "./workflows/receive_message_from_external.ts";
 import ReplyToExternalChatWorkflow from "./workflows/reply_to_external_chat.ts";
 import ResolveTicketWorkflow from "./workflows/resolve_ticket.ts";
 import SendMessageWorkflow from "./workflows/send_message.ts";
@@ -19,7 +19,7 @@ export default Manifest({
   description: "A basic sample that demonstrates issue submission to channel",
   icon: "assets/default_new_app_icon.png",
   workflows: [
-    ReceiveMessageWorkflow,
+    ReceiveExternalMessageWorkflow,
     SendMessageWorkflow,
     ResolveTicketWorkflow,
     ReplyToExternalChatWorkflow,
@@ -34,7 +34,6 @@ export default Manifest({
     "tightknit.requestcatcher.com",
     "eopq43lc1gmcjr0.m.pipedream.net",
     "api.openai.com",
-    "openai.com",
   ],
   datastores: [SalesforceAgentChatsDatastore],
   botScopes: [

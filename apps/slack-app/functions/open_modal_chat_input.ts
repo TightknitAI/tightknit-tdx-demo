@@ -44,21 +44,38 @@ export default SlackFunction(
         "callback_id": "chat-input-modal",
         // This option is required to be notified when this modal is closed by the user
         "notify_on_close": true,
-        "title": { "type": "plain_text", "text": "Chat Reply" },
+        "title": { "type": "plain_text", "text": "Reply to External Chat" },
         "submit": { "type": "plain_text", "text": "Submit" },
         "close": { "type": "plain_text", "text": "Close" },
         "blocks": [
           {
             "type": "input",
-            "block_id": "first_text",
-            "element": { "type": "plain_text_input", "action_id": "action" },
-            "label": { "type": "plain_text", "text": "First" },
+            "element": {
+              "type": "plain_text_input",
+              "multiline": true,
+              "action_id": "plain_text_input-action",
+              placeholder: {
+                "type": "plain_text",
+                "text": "Write a response to the external chat",
+                "emoji": true,
+              },
+            },
+            "label": {
+              "type": "plain_text",
+              "text": "Message",
+              "emoji": true,
+            },
           },
         ],
       },
     });
 
     if (response.error) {
+      console.error(
+        "Failed to open modal for chat input",
+        response.error,
+        response,
+      );
       const error =
         `Failed to open modal for chat input. Contact the app maintainers with the following information - (error: ${response.error})`;
       return { error };
