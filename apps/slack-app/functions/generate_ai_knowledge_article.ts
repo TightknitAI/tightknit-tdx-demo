@@ -1,4 +1,5 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
+import { generateArticleFromSlackThread } from "../lib/generate-article-from-slack-thread.ts";
 
 const GENERATE_ARTICLE_BUTTON_ACTION_ID = "generate-kav-action-id";
 
@@ -125,26 +126,42 @@ export default SlackFunction(
     // interactions with the above two action_ids get handled by the function below
     async function ({ action, body, client, env }) {
       console.log("Incoming action handler invocation", action);
-      // console.log(body);
-      const myEnvVar = env["OPENAI_API_KEY"];
-      console.log("ENV", myEnvVar);
+      console.log(body);
+
+      const thread_ts = body.message?.thread_ts || body.message?.ts;
+      if (!thread_ts) {
+        console.log("No thread_ts or ts in the message, aborting");
+        return;
+      }
+
+      const openAiApiKey = env["OPENAI_API_KEY"];
+      const generatedArticle = await generateArticleFromSlackThread({
+        channel: body.container.channel_id,
+        client,
+        thread_ts,
+        openAiApiKey,
+      });
+
+      if (!generatedArticle) {
+        // TODO
+      }
 
       // const approved = action.action_id === APPROVE_ID;
-      const parentMessageTs = body.container.message_ts;
+      // const parentMessageTs = body.container.message_ts;
 
       const msgResponse = await client.chat.postMessage({
         channel: "C06FQR45E7R", // TODO make configurable
-        thread_ts: parentMessageTs,
+        thread_ts,
         blocks: [{
           type: "context",
           elements: [
             {
               type: "mrkdwn",
-              text: `Generating...`,
+              text: `*Generated Knowledge Article*:\n${generatedArticle}`,
             },
           ],
         }],
-        text: `Generating the Knowledge Article...`,
+        text: `Generated Knowledge Article: ${generatedArticle}`,
       });
       if (!msgResponse.ok) {
         console.log(

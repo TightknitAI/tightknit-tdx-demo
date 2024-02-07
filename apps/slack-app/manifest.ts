@@ -13,7 +13,7 @@ import SendMessageWorkflow from "./workflows/send_message.ts";
  * https://api.slack.com/automation/manifest
  */
 export default Manifest({
-  name: "Tightknit TDX Demo",
+  name: "Tightknit TDX Demo (scook)",
   description: "A basic sample that demonstrates issue submission to channel",
   icon: "assets/default_new_app_icon.png",
   workflows: [
@@ -29,6 +29,8 @@ export default Manifest({
   outgoingDomains: [
     "tightknit.requestcatcher.com",
     "eopq43lc1gmcjr0.m.pipedream.net",
+    "api.openai.com",
+    "openai.com",
   ],
   datastores: [SalesforceAgentChatsDatastore],
   botScopes: [
@@ -36,6 +38,8 @@ export default Manifest({
     "chat:write",
     "chat:write.public",
     "chat:write.customize",
+    "channels:read",
+    "channels:history",
     "groups:history",
     "datastore:read",
     "datastore:write",
