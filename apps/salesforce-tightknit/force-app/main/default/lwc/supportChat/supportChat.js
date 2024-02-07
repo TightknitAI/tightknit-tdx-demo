@@ -23,7 +23,7 @@ export default class SupportChat extends LightningElement {
   currentUserPhotoUrl;
   currentUserId;
   newMessage = "";
-  @track messageToSend = "";
+  @track messageInputValue = "";
 
   getChatMessagesResult;
 
@@ -95,8 +95,8 @@ export default class SupportChat extends LightningElement {
     }`;
   }
 
-  handleMessageToSendChange(event) {
-    this.messageToSend = event.target.value;
+  handleMessageInputChange(event) {
+    this.messageInputValue = event.target.value;
   }
 
   async handleMessageInputKeyPress(event) {
@@ -107,13 +107,13 @@ export default class SupportChat extends LightningElement {
   }
 
   async handleSendNewMessage() {
-    const messageToSendCleaned = this.messageToSend.trim();
-    if (!messageToSendCleaned) {
+    const messageToSend = this.messageInputValue.trim();
+    if (!messageToSend) {
       return;
     }
 
     const fields = {};
-    fields["Body__c"] = messageToSendCleaned;
+    fields["Body__c"] = messageToSend;
     fields["Chat_Conversation__c"] = this.chatConversationId;
     fields["Sender_Name__c"] = this.currentUserName;
     if (this.currentUserId) {
@@ -127,20 +127,21 @@ export default class SupportChat extends LightningElement {
       // Create the record in Salesforce
       console.log("Creating record...", recordInput);
       await createRecord(recordInput);
-
-      // Send the message to Slack webhook endpoint
-      await this.sendMessageToSlackApp(this.messageToSend);
-      this.scrollToBottom();
     } catch (error) {
       console.error("Error creating ChatMessage record:", error);
       return;
     } finally {
-      this.messageToSend = ""; // Clear the input field
+      this.messageInputValue = ""; // Clear the input field
     }
-
     console.log("ChatMessage record created successfully.");
+
+    // Refresh the chat messages
     // Note: refreshApex does not work in Builder live preview
     refreshApex(this.getChatMessagesResult);
+    this.scrollToBottom();
+
+    // Send the message to Slack webhook endpoint
+    await this.sendMessageToSlackApp(messageToSend);
   }
 
   // Polling

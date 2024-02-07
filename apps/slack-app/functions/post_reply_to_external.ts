@@ -56,8 +56,6 @@ export default SlackFunction(
       senderPhotoUrl,
     } = inputs;
 
-    const formattedMessage = `> ${message}`;
-
     // Send a threaded reply to the message associated with the conversation
     const chatPostMessageResponse = await client.chat.postMessage({
       channel,
@@ -66,13 +64,6 @@ export default SlackFunction(
       thread_ts: thread_ts,
       text: message,
       blocks: [
-        {
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text": formattedMessage,
-          },
-        },
         {
           "type": "rich_text",
           "elements": [

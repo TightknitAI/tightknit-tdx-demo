@@ -84,8 +84,12 @@ export default SlackFunction(
       postAsUser,
     } = inputs;
 
+    // Use a blockquote for direct quotes as a visual indicator it came from a remote user
+    const formattedMessage = postAsUser ? `> ${message}` : message;
+
     console.log("inputs", inputs);
     console.log("message", message);
+    console.log("formattedMessage", formattedMessage);
 
     // 1. Look up if conversation is already tracked in datastore
     const getResponse = await client.apps.datastore.get<
@@ -137,22 +141,14 @@ export default SlackFunction(
         username: postAsUser && authorUsername ? authorUsername : undefined,
         icon_url: postAsUser && authorPhotoUrl ? authorPhotoUrl : undefined,
         icon_emoji: !postAsUser && iconEmoji ? iconEmoji : undefined,
-        text: message,
+        text: formattedMessage,
         blocks: [
-          // Use a blockquote for direct quotes as a visual indicator it came from a remote user
           {
-            "type": "rich_text",
-            "elements": [
-              {
-                "type": "rich_text_quote",
-                "elements": [
-                  {
-                    "type": "text",
-                    "text": message,
-                  },
-                ],
-              },
-            ],
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": formattedMessage,
+            },
           },
           ...replyWorkflowTriggerBlocks,
         ],
@@ -192,21 +188,14 @@ export default SlackFunction(
         icon_url: postAsUser && authorPhotoUrl ? authorPhotoUrl : undefined,
         icon_emoji: !postAsUser && iconEmoji ? iconEmoji : undefined,
         thread_ts: message_ts,
-        text: message,
+        text: formattedMessage,
         blocks: [
           {
-            "type": "rich_text",
-            "elements": [
-              {
-                "type": "rich_text_quote",
-                "elements": [
-                  {
-                    "type": "text",
-                    "text": message,
-                  },
-                ],
-              },
-            ],
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": formattedMessage,
+            },
           },
           ...replyWorkflowTriggerBlocks,
         ],
