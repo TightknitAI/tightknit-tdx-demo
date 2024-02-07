@@ -216,16 +216,6 @@ export default SlackFunction(
         channel: "C06FQR45E7R", // TODO make configurable
         thread_ts,
         blocks: [
-          //   {
-          //   type: "context",
-          //   elements: [
-          //     {
-          //       type: "mrkdwn",
-          //       text:
-          //         `_Do you want to create a draft of this article in Salesforce Knowledge?_ \nClick <${createKnowledgeWorkflowLink}|here>`,
-          //     },
-          //   ],
-          // },
           {
             "type": "section",
             "text": {
@@ -233,15 +223,6 @@ export default SlackFunction(
               "text":
                 "Do you want to create a draft of this article in Salesforce Knowledge?",
             },
-            // "accessory": {
-            //   "type": "button",
-            //   "text": {
-            //     "type": "plain_text",
-            //     "text": "Save KAV (Draft)",
-            //     "emoji": true,
-            //   },
-            //   "url": createKnowledgeWorkflowLink,
-            // },
           },
           {
             "type": "actions",

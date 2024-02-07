@@ -1,7 +1,5 @@
-// import {
-//   ChatCompletionSystemMessageParam
-// } from 'openai/resources';
 import { SlackAPIClient } from "deno-slack-sdk/deps.ts";
+import { CHAT_CONTENT_EVENT_TYPE, IS_CHAT_CONTENT_KEY_NAME } from "../functions/post_message_or_reply_from_external.ts";
 import { generateAiArticle } from './openai/generate-ai-article.ts';
 import { getOpenAI } from './openai/openai.ts';
 
@@ -34,6 +32,7 @@ export async function generateArticleFromSlackThread({
   const cursorPaginationResponse = await client.conversations.replies({
     channel,
     ts: thread_ts,
+    include_all_metadata: true, // we need the metadata we set for chat messages
   });
   if (!cursorPaginationResponse.ok || !cursorPaginationResponse.messages) {
     console.error("Failed to get thread messages from conversations.replies", cursorPaginationResponse);
@@ -43,15 +42,15 @@ export async function generateArticleFromSlackThread({
 
   const groundingMessages : GroundingMessage[] = cursorPaginationResponse.messages
   .filter((message: any, index: number) => {
-    // Always include the first message
-    if (index === 0) {
-      return true;
-    }
-    // Exclude bot replies, especially from our app
-    return !message.bot_id && !message.app_id;
+    // only include messages with metadata that we marked
+    // as part of the overall external conversation
+    console.log(`METADATA ${index}: `, message.metadata);
+    return message.metadata && message.metadata.event_type === CHAT_CONTENT_EVENT_TYPE && message.metadata.event_payload && message.metadata.event_payload[IS_CHAT_CONTENT_KEY_NAME] === true;
   })
   .map((message: any) => ({
       userIdOrName: message.user,
+      // Get the 'text' field of each Slack message
+      // This assumes no vital information lives only in the 'blocks' field
       text: message.text
     })
   );

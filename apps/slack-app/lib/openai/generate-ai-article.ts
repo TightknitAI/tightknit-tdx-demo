@@ -28,11 +28,11 @@ export async function generateAiArticle({
   const systemMessage = {
     role: 'system',
     name: 'system',
-    content: `You are a customer support representative tasked with writing a helpful Knowledge Article based on the results of a resolved conversation between a support agent and a customer.
-    You have been given the messages of the conversation between the agent and customer.
+    content: `You are a representative tasked with writing a helpful Knowledge Article based on the results of a resolved conversation between a support agent and a customer.
+    You have been given the transcript of the conversation between the agent and customer.
     The first message is from the customer.
-    You will only use the content of the conversation to generate the article. Do not use any other background information.
-    Your task is to generate a helpful, instructive, and professional knowledge article outlining the issue and how it is solved, in order to help future customers solve similar issues. It should be plain text, with no markdown formatting.`
+    You will only use the content of the conversation to generate the article. Do not use any other background information. Do not mention the agent, customer, or their conversation directly.
+    Your task is to generate a helpful, instructive, and professional knowledge article outlining the issue and how it is solved, in order to help future customers resolve similar issues and prevent the need for them to open a case. It should be plain text, with no markdown formatting.`
   };
 
   const openAiGroundingMessages = groundingMessages.map((groundingMessage) => {

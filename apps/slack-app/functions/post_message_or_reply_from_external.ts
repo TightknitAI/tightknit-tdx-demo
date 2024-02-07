@@ -1,6 +1,13 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import SalesforceAgentChatsDatastore from "../datastores/salesforce_agent_chats.ts";
 
+export const CHAT_CONTENT_EVENT_TYPE = "external_chat_message";
+export const IS_CHAT_CONTENT_KEY_NAME = "isChatContent";
+export const MESSAGE_METADATA_FOR_CHAT_CONTENT = {
+  event_type: CHAT_CONTENT_EVENT_TYPE,
+  event_payload: { [IS_CHAT_CONTENT_KEY_NAME]: true },
+};
+
 /**
  * Functions are reusable building blocks of automation that accept
  * inputs, perform calculations, and provide outputs. Functions can
@@ -141,7 +148,8 @@ export default SlackFunction(
         username: postAsUser && authorUsername ? authorUsername : undefined,
         icon_url: postAsUser && authorPhotoUrl ? authorPhotoUrl : undefined,
         icon_emoji: !postAsUser && iconEmoji ? iconEmoji : undefined,
-        text: formattedMessage,
+        metadata: MESSAGE_METADATA_FOR_CHAT_CONTENT,
+        text: message,
         blocks: [
           {
             "type": "section",
@@ -187,8 +195,9 @@ export default SlackFunction(
         username: postAsUser && authorUsername ? authorUsername : undefined,
         icon_url: postAsUser && authorPhotoUrl ? authorPhotoUrl : undefined,
         icon_emoji: !postAsUser && iconEmoji ? iconEmoji : undefined,
+        metadata: MESSAGE_METADATA_FOR_CHAT_CONTENT,
         thread_ts: message_ts,
-        text: formattedMessage,
+        text: message,
         blocks: [
           {
             "type": "section",

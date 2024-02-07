@@ -1,5 +1,7 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 
+import { MESSAGE_METADATA_FOR_CHAT_CONTENT } from "./post_message_or_reply_from_external.ts";
+
 /**
  * Functions are reusable building blocks of automation that accept
  * inputs, perform calculations, and provide outputs. Functions can
@@ -62,6 +64,7 @@ export default SlackFunction(
       username: senderName ? senderName : undefined,
       icon_url: senderPhotoUrl ? senderPhotoUrl : undefined,
       thread_ts: thread_ts,
+      metadata: MESSAGE_METADATA_FOR_CHAT_CONTENT,
       text: message,
       blocks: [
         {
