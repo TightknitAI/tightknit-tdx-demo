@@ -82,21 +82,31 @@ export default SlackFunction(
 
     console.log("CREATE AI ARTICLE", message_ts);
 
-    const blocks = [{
-      "type": "actions",
-      "block_id": "generate-knowledge-article-button",
-      "elements": [
-        {
-          type: "button",
-          text: {
-            type: "plain_text",
-            text: "✨ Generate AI Article",
-          },
-          action_id: GENERATE_ARTICLE_BUTTON_ACTION_ID,
-          style: "primary",
+    const blocks = [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text:
+            "Do you want to generate a new Salesforce Knowledge article based on the results of this conversation?",
         },
-      ],
-    }];
+      },
+      {
+        "type": "actions",
+        "block_id": "generate-knowledge-article-button",
+        "elements": [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "✨ Generate AI Article",
+            },
+            action_id: GENERATE_ARTICLE_BUTTON_ACTION_ID,
+            style: "primary",
+          },
+        ],
+      },
+    ];
 
     const msgResponse = await client.chat.postMessage({
       channel: "C06FQR45E7R", // TODO make configurable
@@ -205,36 +215,52 @@ export default SlackFunction(
       const msgResponse = await client.chat.postMessage({
         channel: "C06FQR45E7R", // TODO make configurable
         thread_ts,
-        blocks: [{
-          type: "context",
-          elements: [
-            {
-              type: "mrkdwn",
-              text:
-                `_Do you want to create a draft of this article in Salesforce Knowledge?_
-                ${createKnowledgeWorkflowLink}\nClick <${createKnowledgeWorkflowLink}|here>`,
-            },
-          ],
-        }, {
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text":
-              "Do you want to create a draft of this article in Salesforce Knowledge?",
-          },
-          "accessory": {
-            "type": "button",
+        blocks: [
+          //   {
+          //   type: "context",
+          //   elements: [
+          //     {
+          //       type: "mrkdwn",
+          //       text:
+          //         `_Do you want to create a draft of this article in Salesforce Knowledge?_ \nClick <${createKnowledgeWorkflowLink}|here>`,
+          //     },
+          //   ],
+          // },
+          {
+            "type": "section",
             "text": {
-              "type": "plain_text",
-              "text": "Save KAV (Draft)",
-              "emoji": true,
+              "type": "mrkdwn",
+              "text":
+                "Do you want to create a draft of this article in Salesforce Knowledge?",
             },
-            // "value": "click_me_123",
-            "url": createKnowledgeWorkflowLink,
-            // "action_id": "button-action",
+            // "accessory": {
+            //   "type": "button",
+            //   "text": {
+            //     "type": "plain_text",
+            //     "text": "Save KAV (Draft)",
+            //     "emoji": true,
+            //   },
+            //   "url": createKnowledgeWorkflowLink,
+            // },
           },
-        }],
-        text: `Generated Knowledge Article: ${generatedArticle}`,
+          {
+            "type": "actions",
+            // "block_id": "generate-knowledge-article-button",
+            "elements": [
+              {
+                type: "button",
+                text: {
+                  type: "plain_text",
+                  text: "💾 Save Knowledge (draft)",
+                  emoji: true,
+                },
+                // action_id: GENERATE_ARTICLE_BUTTON_ACTION_ID,
+                style: "primary",
+              },
+            ],
+          },
+        ],
+        text: `Do you want to save this Salesforce Knowledge article (draft)?`,
       });
       if (!msgResponse.ok) {
         console.log(

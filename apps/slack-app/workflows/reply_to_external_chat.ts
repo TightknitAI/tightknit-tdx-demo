@@ -27,18 +27,6 @@ const ReplyToExternalChatWorkflow = DefineWorkflow({
         type: Schema.types.string,
         description: "The Slack user id of the user that started the workflow",
       },
-      // text: {
-      //   type: Schema.types.string,
-      // },
-      // sender_name: {
-      //   type: Schema.types.string,
-      // },
-      // sender_photo_url: {
-      //   type: Schema.types.string,
-      // },
-      // sender_salesforce_user_id: {
-      //   type: Schema.types.string,
-      // },
     },
     required: ["message_ts", "user_id"],
   },
@@ -75,7 +63,19 @@ const externalChatInfo = ReplyToExternalChatWorkflow.addStep(
   },
 );
 
-// 3. Update the external chat record in Salesforce with the new reply
+// 3. Send the reply in the Slack thread too
+ReplyToExternalChatWorkflow.addStep(
+  PostReplyToExternal,
+  {
+    channel: ReplyToExternalChatWorkflow.inputs.channel_id,
+    thread_ts: ReplyToExternalChatWorkflow.inputs.message_ts,
+    message: inputForm.outputs.fields.messageInput,
+    senderName: externalChatInfo.outputs.senderName,
+    senderPhotoUrl: externalChatInfo.outputs.senderPhotoUrl,
+  },
+);
+
+// 4. Update the external chat record in Salesforce with the new reply
 ReplyToExternalChatWorkflow.addStep(
   Connectors.Salesforce.functions.CreateRecord,
   {
@@ -86,21 +86,9 @@ ReplyToExternalChatWorkflow.addStep(
       "Body__c": inputForm.outputs.fields.messageInput,
       "Sender_Name__c": externalChatInfo.outputs.senderName,
       "Sender_Photo_URL__c": externalChatInfo.outputs.senderPhotoUrl,
-      "Sent_At__c": new Date().toISOString(), // now
+      "Sent_At__c": externalChatInfo.outputs.sentAt,
     },
     salesforce_access_token: { credential_source: "END_USER" },
-  },
-);
-
-// 4. Send the reply in the Slack thread too
-ReplyToExternalChatWorkflow.addStep(
-  PostReplyToExternal,
-  {
-    channel: ReplyToExternalChatWorkflow.inputs.channel_id,
-    thread_ts: ReplyToExternalChatWorkflow.inputs.message_ts,
-    message: inputForm.outputs.fields.messageInput,
-    senderName: externalChatInfo.outputs.senderName,
-    senderPhotoUrl: externalChatInfo.outputs.senderPhotoUrl,
   },
 );
 

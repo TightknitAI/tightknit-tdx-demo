@@ -58,7 +58,7 @@ export async function generateAiArticle({
   const response = await openai.chat.completions.create({
     model: 'gpt-4',
     messages: [systemMessage, ...openAiGroundingMessages],
-    max_tokens: 2000 // 1 token is about 4 characters
+    max_tokens: 400 // 1 token is about 4 characters
   }); // TODO fix type
 
 

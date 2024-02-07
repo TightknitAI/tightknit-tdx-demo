@@ -82,11 +82,13 @@ export default SlackFunction(
           type: "divider",
         },
         {
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text": "_Sent to external chat_",
-          },
+          type: "context",
+          elements: [
+            {
+              type: "mrkdwn",
+              text: `_Sent to external chat_`,
+            },
+          ],
         },
       ],
     });

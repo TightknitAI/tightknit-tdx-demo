@@ -42,8 +42,12 @@ export const GetExternalChatInfo = DefineFunction({
         description:
           "The profile photo URL of the sender of the outbound message",
       },
+      sentAt: {
+        type: Schema.types.string,
+        description: "The date time of the outbound message",
+      },
     },
-    required: ["chatConversationId", "senderName", "senderPhotoUrl"],
+    required: ["chatConversationId", "senderName", "senderPhotoUrl", "sentAt"],
   },
 });
 
@@ -116,12 +120,15 @@ export default SlackFunction(
       usersInfoResponse.user.image_192 || usersInfoResponse.user.image_512 ||
       usersInfoResponse.user.image_original;
 
+    // 4. Get current date time - now
+    const sentAt = new Date().toISOString();
+
     return {
       outputs: {
         chatConversationId,
         senderName,
         senderPhotoUrl,
-        // "https://ca.slack-edge.com/T01NWNWNR8V-U04V2SNHAFR-1c9937aba955-512",
+        sentAt,
       },
     };
   },

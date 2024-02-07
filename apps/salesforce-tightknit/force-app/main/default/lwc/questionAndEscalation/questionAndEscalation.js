@@ -55,7 +55,7 @@ export default class QuestionAndEscalation extends NavigationMixin(
     this.chatConversationId = chatConversationId;
 
     if (chatConversationId) {
-      const customerTicketNotificationMsg = `*${this.currentUserName}* escalated the following issue (Chat ID ${chatConversationId}):\n> ${initialQuery}\n\n*Additional Context*:\n${escalationContext}`;
+      const customerTicketNotificationMsg = `*${this.currentUserName}* (_customer_) opened the following issue:\n> ${initialQuery}\n\n*Additional Context*:\n${escalationContext}`;
       await this.sendMessageToSlackApp(customerTicketNotificationMsg);
 
       // Switch to agent chat view
