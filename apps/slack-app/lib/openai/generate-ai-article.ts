@@ -1,6 +1,3 @@
-// import {
-//   ChatCompletionSystemMessageParam
-// } from 'openai/resources';
 import { getOpenAI } from './openai.ts';
 
 export type GroundingMessage = {
@@ -59,7 +56,7 @@ export async function generateAiArticle({
     model: 'gpt-4',
     messages: [systemMessage, ...openAiGroundingMessages],
     max_tokens: 400 // 1 token is about 4 characters
-  }); // TODO fix type
+  } as any); // TODO fix type
 
 
   console.log("openai response", response);

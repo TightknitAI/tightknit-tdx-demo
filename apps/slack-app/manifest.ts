@@ -4,6 +4,7 @@ import { GenerateAiKnowledgeArticle } from "./functions/generate_ai_knowledge_ar
 import { GetExternalChatInfo } from "./functions/get_external_chat_info.ts";
 import { PostMessageOrReplyFromExternal } from "./functions/post_message_or_reply_from_external.ts";
 import { PostReplyToExternal } from "./functions/post_reply_to_external.ts";
+import CreateKnowledgeArticleRecordWorkflow from "./workflows/create_knowledge_article_record.ts";
 import ReceiveExternalMessageWorkflow from "./workflows/receive_message_from_external.ts";
 import ReplyToExternalChatWorkflow from "./workflows/reply_to_external_chat.ts";
 import ResolveTicketWorkflow from "./workflows/resolve_ticket.ts";
@@ -21,6 +22,7 @@ export default Manifest({
     ReceiveExternalMessageWorkflow,
     ResolveTicketWorkflow,
     ReplyToExternalChatWorkflow,
+    CreateKnowledgeArticleRecordWorkflow,
   ],
   functions: [
     PostMessageOrReplyFromExternal,

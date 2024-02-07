@@ -44,7 +44,6 @@ export async function generateArticleFromSlackThread({
   .filter((message: any, index: number) => {
     // only include messages with metadata that we marked
     // as part of the overall external conversation
-    console.log(`METADATA ${index}: `, message.metadata);
     return message.metadata && message.metadata.event_type === CHAT_CONTENT_EVENT_TYPE && message.metadata.event_payload && message.metadata.event_payload[IS_CHAT_CONTENT_KEY_NAME] === true;
   })
   .map((message: any) => ({

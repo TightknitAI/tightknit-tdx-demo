@@ -1,5 +1,6 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { generateArticleFromSlackThread } from "../lib/generate-article-from-slack-thread.ts";
+import { generateArticleUrlNameFromText } from "../lib/get-article-info.ts";
 
 const GENERATE_ARTICLE_BUTTON_ACTION_ID = "generate-kav-action-id";
 
@@ -136,7 +137,6 @@ export default SlackFunction(
     // interactions with the above two action_ids get handled by the function below
     async function ({ action, body, client, env }) {
       console.log("Incoming action handler invocation", action);
-      // console.log(body);
 
       const thread_ts = body.message?.thread_ts || body.message?.ts;
       if (!thread_ts) {
@@ -170,13 +170,14 @@ export default SlackFunction(
       }
 
       const openAiApiKey = env["OPENAI_API_KEY"];
-      const generatedArticle = await generateArticleFromSlackThread({
-        channel: body.container.channel_id,
-        client,
-        thread_ts,
-        openAiApiKey,
-      });
-      // "PLACEHOLDER";
+      const generatedArticle =
+        // `PLACEHOLDER! ${Math.random()} ${Math.random()} ${Math.random()}`;
+        await generateArticleFromSlackThread({
+          channel: body.container.channel_id,
+          client,
+          thread_ts,
+          openAiApiKey,
+        });
 
       if (!generatedArticle) {
         console.error("Failed to generate Knowledge article");
@@ -210,8 +211,14 @@ export default SlackFunction(
         );
       }
 
-      const createKnowledgeWorkflowLink =
-        "https://slack.com/shortcuts/Ft06HXP98WE5/a797880c76738a3d17cfa53af80dfc35";
+      // We'll just take the first 100 chars of the article for the title
+      // but you could have more sophisticated logic here or even use AI.
+      const articleTitle = generatedArticle.substring(0, 100);
+      const articleUrlName = generateArticleUrlNameFromText({
+        text: articleTitle,
+      });
+      const createKnowledgeArticleTriggerLink =
+        "https://slack.com/shortcuts/Ft06JEACBE3S/f04915608bd24bd5dba2d9c8e704ba39";
       const msgResponse = await client.chat.postMessage({
         channel: "C06FQR45E7R", // TODO make configurable
         thread_ts,
@@ -226,23 +233,41 @@ export default SlackFunction(
           },
           {
             "type": "actions",
-            // "block_id": "generate-knowledge-article-button",
             "elements": [
               {
-                type: "button",
+                type: "workflow_button",
                 text: {
                   type: "plain_text",
                   text: "💾 Save Knowledge (draft)",
                   emoji: true,
                 },
-                // action_id: GENERATE_ARTICLE_BUTTON_ACTION_ID,
                 style: "primary",
+                workflow: {
+                  trigger: {
+                    url: createKnowledgeArticleTriggerLink,
+                    customizable_input_parameters: [
+                      {
+                        name: "article_title",
+                        value: articleTitle,
+                      },
+                      {
+                        name: "article_url_name",
+                        value: articleUrlName,
+                      },
+                      {
+                        name: "article_body",
+                        value: generatedArticle,
+                      },
+                    ],
+                  },
+                },
               },
             ],
           },
         ],
         text: `Do you want to save this Salesforce Knowledge article (draft)?`,
       });
+
       if (!msgResponse.ok) {
         console.log(
           "Error during requester update chat.postMessage!",
