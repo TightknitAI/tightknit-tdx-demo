@@ -134,6 +134,31 @@ export default SlackFunction(
         return;
       }
 
+      // Update the manager's message to remove the buttons and reflect the approval
+      // state. Nice little touch to prevent further interactions with the buttons
+      // after one of them were clicked.
+      const msgUpdate = await client.chat.update({
+        channel: body.container.channel_id,
+        ts: body.container.message_ts,
+        blocks: [
+          {
+            type: "context",
+            elements: [
+              {
+                type: "mrkdwn",
+                text: `⏳ Generating...`,
+              },
+            ],
+          },
+        ],
+      });
+      if (!msgUpdate.ok) {
+        console.log(
+          "Error during manager chat.update to generating state!",
+          msgUpdate.error,
+        );
+      }
+
       const openAiApiKey = env["OPENAI_API_KEY"];
       const generatedArticle = await generateArticleFromSlackThread({
         channel: body.container.channel_id,
@@ -141,14 +166,42 @@ export default SlackFunction(
         thread_ts,
         openAiApiKey,
       });
+      // "PLACEHOLDER";
 
       if (!generatedArticle) {
-        // TODO
+        console.error("Failed to generate Knowledge article");
+        await client.functions.completeError({
+          error: "Failed to generate Knowledge article",
+          function_execution_id: body.function_data.execution_id,
+          outputs: {},
+        });
+        return;
       }
 
-      // const approved = action.action_id === APPROVE_ID;
-      // const parentMessageTs = body.container.message_ts;
+      const msgUpdate2 = await client.chat.update({
+        channel: body.container.channel_id,
+        ts: body.container.message_ts,
+        blocks: [
+          {
+            type: "context",
+            elements: [
+              {
+                type: "plain_text",
+                text: generatedArticle,
+              },
+            ],
+          },
+        ],
+      });
+      if (!msgUpdate2.ok) {
+        console.log(
+          "Error during manager chat.update to article content!",
+          msgUpdate.error,
+        );
+      }
 
+      const createKnowledgeWorkflowLink =
+        "https://slack.com/shortcuts/Ft06HXP98WE5/a797880c76738a3d17cfa53af80dfc35";
       const msgResponse = await client.chat.postMessage({
         channel: "C06FQR45E7R", // TODO make configurable
         thread_ts,
@@ -157,9 +210,29 @@ export default SlackFunction(
           elements: [
             {
               type: "mrkdwn",
-              text: `*Generated Knowledge Article*:\n${generatedArticle}`,
+              text:
+                `_Do you want to create a Draft of this article in Salesforce Knowledge?_
+                ${createKnowledgeWorkflowLink}\nClick <${createKnowledgeWorkflowLink}|here>`,
             },
           ],
+        }, {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text":
+              "Do you want to create a Draft of this article in Salesforce Knowledge?",
+          },
+          "accessory": {
+            "type": "button",
+            "text": {
+              "type": "plain_text",
+              "text": "Save KAV (Draft)",
+              "emoji": true,
+            },
+            // "value": "click_me_123",
+            "url": createKnowledgeWorkflowLink,
+            // "action_id": "button-action",
+          },
         }],
         text: `Generated Knowledge Article: ${generatedArticle}`,
       });
@@ -167,29 +240,9 @@ export default SlackFunction(
         console.log(
           "Error during requester update chat.postMessage!",
           msgResponse.error,
+          msgResponse,
         );
       }
-      // // Update the manager's message to remove the buttons and reflect the approval
-      // // state. Nice little touch to prevent further interactions with the buttons
-      // // after one of them were clicked.
-      // const msgUpdate = await client.chat.update({
-      //   channel: body.container.channel_id,
-      //   ts: body.container.message_ts,
-      //   blocks: [
-      //     {
-      //       type: "context",
-      //       elements: [
-      //         {
-      //           type: "mrkdwn",
-      //           text: `Done`,
-      //         },
-      //       ],
-      //     },
-      //   ],
-      // });
-      // if (!msgUpdate.ok) {
-      //   console.log("Error during manager chat.update!", msgUpdate.error);
-      // }
 
       // And now we can mark the function as 'completed' - which is required as
       // we explicitly marked it as incomplete in the main function handler.

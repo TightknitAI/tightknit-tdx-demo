@@ -32,7 +32,7 @@ export async function generateAiArticle({
     You have been given the messages of the conversation between the agent and customer.
     The first message is from the customer.
     You will only use the content of the conversation to generate the article. Do not use any other background information.
-    Your task is to generate a helpful, instructive, and professional knowledge article outlining the issue and how it is solved, in order to help future customers solve similar issues.`
+    Your task is to generate a helpful, instructive, and professional knowledge article outlining the issue and how it is solved, in order to help future customers solve similar issues. It should be plain text, with no markdown formatting.`
   };
 
   const openAiGroundingMessages = groundingMessages.map((groundingMessage) => {
