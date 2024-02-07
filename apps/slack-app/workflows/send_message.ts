@@ -42,7 +42,7 @@ const gif = SendMessageWorkflow.addStep(
 );
 
 SendMessageWorkflow.addStep(Schema.slack.functions.SendMessage, {
-  channel_id: "C06B35DLMJT",
+  channel_id: "C06FQR45E7R",
   message: `GIF image:\n${gif.outputs.gif_title_url}`,
 });
 

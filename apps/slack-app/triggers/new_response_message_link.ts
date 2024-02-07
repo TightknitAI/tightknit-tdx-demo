@@ -15,7 +15,7 @@ const sendMessageLink: Trigger<typeof SendMessageWorkflow.definition> = {
   workflow: "#/workflows/send_message",
   // event: {
   //   event_type: TriggerEventTypes.MessagePosted,
-  //   channel_ids: ["C06B35DLMJT"],
+  //   channel_ids: ["C06FQR45E7R"],
   //   filter: {
   //     version: 1,
   //     root: {

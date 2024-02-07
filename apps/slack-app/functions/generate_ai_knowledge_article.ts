@@ -126,7 +126,7 @@ export default SlackFunction(
     // interactions with the above two action_ids get handled by the function below
     async function ({ action, body, client, env }) {
       console.log("Incoming action handler invocation", action);
-      console.log(body);
+      // console.log(body);
 
       const thread_ts = body.message?.thread_ts || body.message?.ts;
       if (!thread_ts) {
