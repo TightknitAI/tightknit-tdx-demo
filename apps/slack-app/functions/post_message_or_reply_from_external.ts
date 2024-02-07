@@ -7,12 +7,12 @@ import SalesforceAgentChatsDatastore from "../datastores/salesforce_agent_chats.
  * be used independently or as steps in workflows.
  * https://api.slack.com/automation/functions/custom
  */
-export const PostMessageOrThreadedReply = DefineFunction({
-  callback_id: "post_message_or_threaded_reply",
-  title: "Post an issue in a message or threaded reply in a channel",
+export const PostMessageOrReplyFromExternal = DefineFunction({
+  callback_id: "post_message_or_reply_from_external",
+  title: "Post a message or threaded reply in a channel",
   description:
-    "Post a message in a channel or a threaded reply to a message in a channel",
-  source_file: "functions/post_message_or_reply.ts",
+    "Post a message or a threaded reply, representing a message from an external chat, in a Slack channel",
+  source_file: "functions/post_message_or_reply_from_external.ts",
   input_parameters: {
     properties: {
       channel: {
@@ -72,7 +72,7 @@ export const PostMessageOrThreadedReply = DefineFunction({
  * https://api.slack.com/automation/functions/custom
  */
 export default SlackFunction(
-  PostMessageOrThreadedReply,
+  PostMessageOrReplyFromExternal,
   async ({ inputs, client }) => {
     const {
       channel,
@@ -84,11 +84,8 @@ export default SlackFunction(
       postAsUser,
     } = inputs;
 
-    // Use a blockquote for direct quotes as a visual indicator it came from a remote user
-    const formattedMessage = postAsUser ? `> ${message}` : message;
-
     console.log("inputs", inputs);
-    console.log("formattedMessage", formattedMessage);
+    console.log("message", message);
 
     // 1. Look up if conversation is already tracked in datastore
     const getResponse = await client.apps.datastore.get<
@@ -140,14 +137,22 @@ export default SlackFunction(
         username: postAsUser && authorUsername ? authorUsername : undefined,
         icon_url: postAsUser && authorPhotoUrl ? authorPhotoUrl : undefined,
         icon_emoji: !postAsUser && iconEmoji ? iconEmoji : undefined,
-        text: formattedMessage,
+        text: message,
         blocks: [
+          // Use a blockquote for direct quotes as a visual indicator it came from a remote user
           {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": formattedMessage,
-            },
+            "type": "rich_text",
+            "elements": [
+              {
+                "type": "rich_text_quote",
+                "elements": [
+                  {
+                    "type": "text",
+                    "text": message,
+                  },
+                ],
+              },
+            ],
           },
           ...replyWorkflowTriggerBlocks,
         ],
@@ -187,14 +192,21 @@ export default SlackFunction(
         icon_url: postAsUser && authorPhotoUrl ? authorPhotoUrl : undefined,
         icon_emoji: !postAsUser && iconEmoji ? iconEmoji : undefined,
         thread_ts: message_ts,
-        text: formattedMessage,
+        text: message,
         blocks: [
           {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": formattedMessage,
-            },
+            "type": "rich_text",
+            "elements": [
+              {
+                "type": "rich_text_quote",
+                "elements": [
+                  {
+                    "type": "text",
+                    "text": message,
+                  },
+                ],
+              },
+            ],
           },
           ...replyWorkflowTriggerBlocks,
         ],

@@ -1,8 +1,7 @@
-// import { Connectors } from "deno-slack-hub/mod.ts";
-
 import { Connectors } from "deno-slack-hub/mod.ts";
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
 import { GetExternalChatInfo } from "../functions/get_external_chat_info.ts";
+import { PostReplyToExternal } from "../functions/post_reply_to_external.ts";
 
 /**
  * A workflow is a set of steps that are executed in order.
@@ -45,16 +44,7 @@ const ReplyToExternalChatWorkflow = DefineWorkflow({
   },
 });
 
-// const chatReplyStep = ReplyToExternalChatWorkflow.addStep(
-//   OpenModalChatInput,
-//   {
-//     interactivity: ReplyToExternalChatWorkflow.inputs.interactivity,
-//     user_id: ReplyToExternalChatWorkflow.inputs.user_id,
-//   },
-// );
-
-// console.log("chatReplyStep", chatReplyStep);
-
+// 1. Get the message text from the user using a modal
 const inputForm = ReplyToExternalChatWorkflow.addStep(
   Schema.slack.functions.OpenForm,
   {
@@ -75,6 +65,7 @@ const inputForm = ReplyToExternalChatWorkflow.addStep(
   },
 );
 
+// 2. Get the metadata about the external chat record we will update
 const externalChatInfo = ReplyToExternalChatWorkflow.addStep(
   GetExternalChatInfo,
   {
@@ -84,20 +75,15 @@ const externalChatInfo = ReplyToExternalChatWorkflow.addStep(
   },
 );
 
-// ReplyToExternalChatWorkflow.addStep(Schema.slack.functions.SendMessage, {
-//   channel_id: ReplyToExternalChatWorkflow.inputs.channel_id,
-//   message: inputForm.outputs.fields.messageInput,
-// });
-
+// 3. Update the external chat record in Salesforce with the new reply
 ReplyToExternalChatWorkflow.addStep(
   Connectors.Salesforce.functions.CreateRecord,
   {
     salesforce_object_name: "ChatMessage__c",
-    //Metadata to attach to this record, as an array of keys and their values values. Each key should be associated with the API name of a field you want to provide a value for.
+    // Metadata to attach to this record, as an array of keys and their values values. Each key should be associated with the API name of a field you want to provide a value for.
     metadata: {
       "Chat_Conversation__c": externalChatInfo.outputs.chatConversationId,
       "Body__c": inputForm.outputs.fields.messageInput,
-      // TODO: fix these
       "Sender_Name__c": externalChatInfo.outputs.senderName,
       "Sender_Photo_URL__c": externalChatInfo.outputs.senderPhotoUrl,
       "Sent_At__c": new Date().toISOString(), // now
@@ -106,20 +92,16 @@ ReplyToExternalChatWorkflow.addStep(
   },
 );
 
-// ReplyToExternalChatWorkflow.addStep(
-//   Connectors.Salesforce.functions.CreateRecord,
-//   {
-//     salesforce_object_name: "ChatMessage__c",
-//     //Metadata to attach to this record, as an array of keys and their values values. Each key should be associated with the API name of a field you want to provide a value for.
-//     metadata: {
-//       "Chat_Conversation__c": "a01Hs00001sDSV9",
-//       "Body__c": inputForm.outputs.fields.messageInput,
-//       // TODO: fix these
-//       "Sender_Name__c": "Agent",
-//       "Sent_At__c": new Date().toISOString(), // now
-//     },
-//     salesforce_access_token: { credential_source: "END_USER" },
-//   },
-// );
+// 4. Send the reply in the Slack thread too
+ReplyToExternalChatWorkflow.addStep(
+  PostReplyToExternal,
+  {
+    channel: ReplyToExternalChatWorkflow.inputs.channel_id,
+    thread_ts: ReplyToExternalChatWorkflow.inputs.message_ts,
+    message: inputForm.outputs.fields.messageInput,
+    senderName: externalChatInfo.outputs.senderName,
+    senderPhotoUrl: externalChatInfo.outputs.senderPhotoUrl,
+  },
+);
 
 export default ReplyToExternalChatWorkflow;

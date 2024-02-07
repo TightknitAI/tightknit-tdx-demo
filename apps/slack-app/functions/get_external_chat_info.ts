@@ -78,15 +78,6 @@ export default SlackFunction(
     const thread_ts = firstMessage.thread_ts || firstMessage.ts;
 
     // 2. Get the id of the tracked support conversation associated with the thread
-    console.log(
-      "QUERY:",
-      JSON.stringify({
-        datastore: SalesforceAgentChatsDatastore.name,
-        expression: "#message_ts_col = :thread_ts",
-        expression_attributes: { "#message_ts_col": "message_ts" },
-        expression_values: { ":thread_ts": thread_ts },
-      }),
-    );
     const queryResponse = await client.apps.datastore.query({
       "datastore": SalesforceAgentChatsDatastore.name,
       "expression": "#message_ts_col = :thread_ts",
@@ -125,11 +116,6 @@ export default SlackFunction(
       usersInfoResponse.user.image_192 || usersInfoResponse.user.image_512 ||
       usersInfoResponse.user.image_original;
 
-    console.log("RETURNING OUTPUT AT END OF FUNC", {
-      chatConversationId,
-      senderName,
-      senderPhotoUrl,
-    });
     return {
       outputs: {
         chatConversationId,

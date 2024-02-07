@@ -1,5 +1,5 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
-import { PostMessageOrThreadedReply } from "../functions/post_message_or_reply.ts";
+import { PostMessageOrReplyFromExternal } from "../functions/post_message_or_reply_from_external.ts";
 
 /**
  * A workflow is a set of steps that are executed in order.
@@ -45,7 +45,7 @@ const ReceiveExternalMessageWorkflow = DefineWorkflow({
   },
 });
 
-ReceiveExternalMessageWorkflow.addStep(PostMessageOrThreadedReply, {
+ReceiveExternalMessageWorkflow.addStep(PostMessageOrReplyFromExternal, {
   channel: "C06FQR45E7R",
   chatConversationId: ReceiveExternalMessageWorkflow.inputs.chatConversationId,
   message: ReceiveExternalMessageWorkflow.inputs.message,
