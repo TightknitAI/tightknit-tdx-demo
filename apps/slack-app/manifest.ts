@@ -15,8 +15,9 @@ import ResolveTicketWorkflow from "./workflows/resolve_ticket.ts";
  * https://api.slack.com/automation/manifest
  */
 export default Manifest({
-  name: "Tightknit TDX Demo (scook)",
-  description: "A basic sample that demonstrates issue submission to channel",
+  name: "Tightknit TDX Demo",
+  description:
+    "A basic sample that demonstrates syncing custom support chat messages with an external source (Salesforce)",
   icon: "assets/default_new_app_icon.png",
   workflows: [
     ReceiveExternalMessageWorkflow,
@@ -30,9 +31,7 @@ export default Manifest({
     GenerateAiKnowledgeArticle,
     GetExternalChatInfo,
   ],
-  outgoingDomains: [
-    "api.openai.com",
-  ],
+  outgoingDomains: ["api.openai.com"],
   datastores: [SalesforceAgentChatsDatastore],
   botScopes: [
     "commands",
