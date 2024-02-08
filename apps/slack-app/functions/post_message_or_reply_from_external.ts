@@ -1,18 +1,25 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import SalesforceAgentChatsDatastore from "../datastores/salesforce_agent_chats.ts";
 
+export const CHAT_CONTENT_EVENT_TYPE = "external_chat_message";
+export const IS_CHAT_CONTENT_KEY_NAME = "isChatContent";
+export const MESSAGE_METADATA_FOR_CHAT_CONTENT = {
+  event_type: CHAT_CONTENT_EVENT_TYPE,
+  event_payload: { [IS_CHAT_CONTENT_KEY_NAME]: true },
+};
+
 /**
  * Functions are reusable building blocks of automation that accept
  * inputs, perform calculations, and provide outputs. Functions can
  * be used independently or as steps in workflows.
  * https://api.slack.com/automation/functions/custom
  */
-export const PostMessageOrThreadedReply = DefineFunction({
-  callback_id: "post_message_or_threaded_reply",
-  title: "Post an issue in a message or threaded reply in a channel",
+export const PostMessageOrReplyFromExternal = DefineFunction({
+  callback_id: "post_message_or_reply_from_external",
+  title: "Post a message or threaded reply in a channel",
   description:
-    "Post a message in a channel or a threaded reply to a message in a channel",
-  source_file: "functions/post_message_or_reply.ts",
+    "Post a message or a threaded reply, representing a message from an external chat, in a Slack channel",
+  source_file: "functions/post_message_or_reply_from_external.ts",
   input_parameters: {
     properties: {
       channel: {
@@ -72,7 +79,7 @@ export const PostMessageOrThreadedReply = DefineFunction({
  * https://api.slack.com/automation/functions/custom
  */
 export default SlackFunction(
-  PostMessageOrThreadedReply,
+  PostMessageOrReplyFromExternal,
   async ({ inputs, client }) => {
     const {
       channel,
@@ -88,6 +95,7 @@ export default SlackFunction(
     const formattedMessage = postAsUser ? `> ${message}` : message;
 
     console.log("inputs", inputs);
+    console.log("message", message);
     console.log("formattedMessage", formattedMessage);
 
     // 1. Look up if conversation is already tracked in datastore
@@ -107,6 +115,28 @@ export default SlackFunction(
     }
 
     let message_ts = getResponse.item.message_ts;
+    // TODO change this to your own workflow trigger link
+    const replyWebhookLink =
+      "https://slack.com/shortcuts/Ft06HKR8ELHK/a2793c55ddb9fb9f99ae54ae365aadbe";
+    const replyWorkflowTriggerBlocks = [{
+      type: "divider",
+    }, {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "_Send reply to external chat_",
+      },
+      "accessory": {
+        "type": "button",
+        "text": {
+          "type": "plain_text",
+          "text": "Reply",
+          "emoji": true,
+        },
+        // webhook URL to trigger the reply_to_external_chat_workflow
+        "url": replyWebhookLink,
+      },
+    }];
 
     // 2. If not tracked, create a new conversation in the datastore
     // and send a new message in channel
@@ -115,10 +145,21 @@ export default SlackFunction(
       const chatPostMessageResponse = await client.chat.postMessage({
         channel,
         thread_ts: message_ts,
-        text: formattedMessage,
         username: postAsUser && authorUsername ? authorUsername : undefined,
         icon_url: postAsUser && authorPhotoUrl ? authorPhotoUrl : undefined,
         icon_emoji: !postAsUser && iconEmoji ? iconEmoji : undefined,
+        metadata: MESSAGE_METADATA_FOR_CHAT_CONTENT,
+        text: message,
+        blocks: [
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": formattedMessage,
+            },
+          },
+          ...replyWorkflowTriggerBlocks,
+        ],
       });
       console.log("chatPostMessageResponse", chatPostMessageResponse);
       if (!chatPostMessageResponse || !chatPostMessageResponse.ok) {
@@ -151,11 +192,22 @@ export default SlackFunction(
       // 3. If tracked, send a threaded reply to the message associated with the conversation
       const chatPostMessageResponse = await client.chat.postMessage({
         channel,
-        thread_ts: message_ts,
-        text: formattedMessage,
         username: postAsUser && authorUsername ? authorUsername : undefined,
         icon_url: postAsUser && authorPhotoUrl ? authorPhotoUrl : undefined,
         icon_emoji: !postAsUser && iconEmoji ? iconEmoji : undefined,
+        metadata: MESSAGE_METADATA_FOR_CHAT_CONTENT,
+        thread_ts: message_ts,
+        text: message,
+        blocks: [
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": formattedMessage,
+            },
+          },
+          ...replyWorkflowTriggerBlocks,
+        ],
       });
       if (!chatPostMessageResponse || !chatPostMessageResponse.ok) {
         const postErrorMsg =
