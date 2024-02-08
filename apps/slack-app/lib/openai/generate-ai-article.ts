@@ -52,6 +52,7 @@ export async function generateAiArticle({
   //   content: originalMessageText
   // };
 
+  const maxTokens = 400; 
   const response = await openai.chat.completions.create({
     model: 'gpt-4',
     messages: [systemMessage, ...openAiGroundingMessages],

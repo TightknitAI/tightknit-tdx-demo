@@ -1,6 +1,9 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { generateArticleFromSlackThread } from "../lib/generate-article-from-slack-thread.ts";
-import { generateArticleUrlNameFromText } from "../lib/get-article-info.ts";
+import {
+  getArticleTitleFromText,
+  getArticleUrlNameFromText,
+} from "../lib/get-article-info.ts";
 
 const GENERATE_ARTICLE_BUTTON_ACTION_ID = "generate-kav-action-id";
 
@@ -29,43 +32,9 @@ export const GenerateAiKnowledgeArticle = DefineFunction({
         type: Schema.types.string,
         description: "Message timestamp",
       },
-      // authorUsername: {
-      //   type: Schema.types.string,
-      //   description: "The name of the author sending the message",
-      // },
-      // authorPhotoUrl: {
-      //   type: Schema.types.string,
-      //   description: "The URL of the author's profile photo",
-      // },
-      // iconEmoji: {
-      //   type: Schema.types.string,
-      //   description: "The emoji to use as the message's icon",
-      // },
-      // postAsUser: {
-      //   type: Schema.types.boolean,
-      //   description:
-      //     "If true, will display the message as if it was quoted from the user",
-      //   default: true,
-      // },
     },
     required: ["message_ts"],
   },
-  // output_parameters: {
-  //   properties: {
-  //     // channel: {
-  //     //   type: Schema.slack.types.channel_id,
-  //     // },
-  //     // chatConversationId: {
-  //     //   type: Schema.types.string,
-  //     //   description: "ID of the ChatConversation__c record",
-  //     // },
-  //     message_ts: {
-  //       type: Schema.types.string,
-  //       description: "Message timestamp",
-  //     },
-  //   },
-  //   required: ["message_ts"],
-  // },
 });
 
 /**
@@ -170,7 +139,7 @@ export default SlackFunction(
       }
 
       const openAiApiKey = env["OPENAI_API_KEY"];
-      const generatedArticle =
+      let generatedArticle =
         // `PLACEHOLDER! ${Math.random()} ${Math.random()} ${Math.random()}`;
         await generateArticleFromSlackThread({
           channel: body.container.channel_id,
@@ -188,6 +157,11 @@ export default SlackFunction(
         });
         return;
       }
+
+      // FYI: Slack's string type limit is 4000 bytes: https://api.slack.com/automation/types#all-built-in-types
+      // which we will unsafely estimate is about 2000-4000 characters depending on language, so lets take lower bound.
+      // Also make sure you observe the length specified on the field of your Salesforce Knowledge object.
+      generatedArticle = generatedArticle.substring(0, 2000);
 
       const msgUpdate2 = await client.chat.update({
         channel: body.container.channel_id,
@@ -211,12 +185,15 @@ export default SlackFunction(
         );
       }
 
-      // We'll just take the first 100 chars of the article for the title
-      // but you could have more sophisticated logic here or even use AI.
-      const articleTitle = generatedArticle.substring(0, 100);
-      const articleUrlName = generateArticleUrlNameFromText({
+      const articleTitle = getArticleTitleFromText({
+        text: generatedArticle,
+      });
+      const articleUrlName = getArticleUrlNameFromText({
         text: articleTitle,
       });
+      console.log(`Suggested article title: "${articleTitle}"`);
+      console.log(`Suggested article urlName: ${articleUrlName}`);
+
       const createKnowledgeArticleTriggerLink =
         "https://slack.com/shortcuts/Ft06JEACBE3S/f04915608bd24bd5dba2d9c8e704ba39";
       const msgResponse = await client.chat.postMessage({
@@ -233,9 +210,11 @@ export default SlackFunction(
           },
           {
             "type": "actions",
+            "block_id": "save-draft-article-block-id",
             "elements": [
               {
                 type: "workflow_button",
+                action_id: "save-draft-article-action-id",
                 text: {
                   type: "plain_text",
                   text: "💾 Save Knowledge (draft)",
@@ -246,6 +225,10 @@ export default SlackFunction(
                   trigger: {
                     url: createKnowledgeArticleTriggerLink,
                     customizable_input_parameters: [
+                      {
+                        name: "thread_ts",
+                        value: thread_ts,
+                      },
                       {
                         name: "article_title",
                         value: articleTitle,
