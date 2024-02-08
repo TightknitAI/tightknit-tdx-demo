@@ -21,13 +21,6 @@ export const GenerateAiKnowledgeArticle = DefineFunction({
   source_file: "functions/generate_ai_knowledge_article.ts",
   input_parameters: {
     properties: {
-      // channel: {
-      //   type: Schema.slack.types.channel_id,
-      // },
-      // chatConversationId: {
-      //   type: Schema.types.string,
-      //   description: "ID of the ChatConversation__c record",
-      // },
       message_ts: {
         type: Schema.types.string,
         description: "Message timestamp",

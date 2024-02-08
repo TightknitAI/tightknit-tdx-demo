@@ -21,7 +21,6 @@ export async function generateAiArticle({
 }): Promise<string | null> {
   const openai = getOpenAI(openAiApiKey);
 
-  // const systemMessage: ChatCompletionSystemMessageParam = {
   const systemMessage = {
     role: 'system',
     name: 'system',
@@ -42,15 +41,6 @@ export async function generateAiArticle({
     return trainingMessage;
   });
 
-  console.log(
-    'groundingMessages',
-    openAiGroundingMessages
-  );
-
-  // const userMessage: ChatCompletionUserMessageParam = {
-  //   role: 'user',
-  //   content: originalMessageText
-  // };
 
   const maxTokens = 400; 
   const response = await openai.chat.completions.create({
@@ -59,8 +49,6 @@ export async function generateAiArticle({
     max_tokens: 400 // 1 token is about 4 characters
   } as any); // TODO fix type
 
-
-  console.log("openai response", response);
 
   const answer = response.choices[0].message.content;
   console.info('OpenAI answer:', answer);

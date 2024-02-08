@@ -28,16 +28,6 @@ const CreateKnowledgeArticleRecordWorkflow = DefineWorkflow({
       article_body: {
         type: Schema.types.string,
       },
-      // message_ts: {
-      //   type: Schema.types.string,
-      // },
-      // channel_id: {
-      //   type: Schema.types.string,
-      // },
-      // user_id: {
-      //   type: Schema.types.string,
-      //   description: "The Slack user id of the user that started the workflow",
-      // },
     },
     required: [
       "thread_ts",

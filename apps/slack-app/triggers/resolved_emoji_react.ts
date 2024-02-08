@@ -30,16 +30,9 @@ const resolvedEmojiReactAdded: Trigger<
     },
   },
   inputs: {
-    // text: {
-    //   // value: TriggerContextData.Event.MessagePosted.text,
-    //   value: "REACTION!",
-    // },
     message_ts: {
       value: TriggerContextData.Event.ReactionAdded.message_ts,
     },
-    // user_id: {
-    //   value: TriggerContextData.Event.ReactionAdded.user_id,
-    // },
   },
 };
 

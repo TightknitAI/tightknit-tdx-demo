@@ -17,15 +17,6 @@ const createKnowledgeArticleLink: Trigger<
   workflow: "#/workflows/create_knowledge_article_record_workflow",
   inputs: {
     interactivity: { value: TriggerContextData.Shortcut.interactivity },
-    // thread_ts: {
-    //   value: TriggerContextData.Shortcut.message_ts,
-    // },
-    // channel_id: {
-    //   value: TriggerContextData.Shortcut.channel_id,
-    // },
-    // user_id: {
-    //   value: TriggerContextData.Shortcut.user_id,
-    // },
     thread_ts: {
       customizable: true,
     },
