@@ -131,12 +131,23 @@ export default SlackFunction(
         );
       }
 
-      let generatedArticle = await generateArticleFromSlackThread({
-        client,
-        env,
-        channel: body.container.channel_id,
-        thread_ts,
-      });
+      // WARNING: Slack may kill this function if it times out (>10.0s)
+      // in which case, even if our article is generated, we won't be able to update the Slack message
+      // or post a new message with the article content...
+      // See possible planned timeout extension: https://github.com/slackapi/deno-slack-sdk/issues/227#issuecomment-1929596444
+      let generatedArticle;
+      if (env["AI_ARTICLE_PLACEHOLDER"]) {
+        // demo purposes - use a placeholder and wait
+        generatedArticle = env["AI_ARTICLE_PLACEHOLDER"];
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      } else {
+        await generateArticleFromSlackThread({
+          client,
+          env,
+          channel: body.container.channel_id,
+          thread_ts,
+        });
+      }
 
       if (!generatedArticle) {
         console.error("Failed to generate Knowledge article");
@@ -167,6 +178,8 @@ export default SlackFunction(
             ],
           },
         ],
+        // Fallback text to use when rich media can't be displayed (i.e. notifications) as well as for screen readers
+        text: generatedArticle,
       });
       if (!msgUpdate2.ok) {
         console.log(
