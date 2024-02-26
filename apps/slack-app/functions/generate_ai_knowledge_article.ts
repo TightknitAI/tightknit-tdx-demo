@@ -131,15 +131,12 @@ export default SlackFunction(
         );
       }
 
-      const openAiApiKey = env["OPENAI_API_KEY"];
-      let generatedArticle =
-        // `PLACEHOLDER! ${Math.random()} ${Math.random()} ${Math.random()}`;
-        await generateArticleFromSlackThread({
-          channel: body.container.channel_id,
-          client,
-          thread_ts,
-          openAiApiKey,
-        });
+      let generatedArticle = await generateArticleFromSlackThread({
+        client,
+        env,
+        channel: body.container.channel_id,
+        thread_ts,
+      });
 
       if (!generatedArticle) {
         console.error("Failed to generate Knowledge article");
@@ -187,8 +184,9 @@ export default SlackFunction(
       console.log(`Suggested article title: "${articleTitle}"`);
       console.log(`Suggested article urlName: ${articleUrlName}`);
 
+      // TODO change this to your own workflow trigger link
       const createKnowledgeArticleTriggerLink =
-        "https://slack.com/shortcuts/Ft06JEACBE3S/f04915608bd24bd5dba2d9c8e704ba39";
+        "https://slack.com/shortcuts/Ft06LE0R6ZHU/972feacf0445eadab322cdcfec938ba7";
       const msgResponse = await client.chat.postMessage({
         channel: "C06FQR45E7R", // TODO make configurable
         thread_ts,

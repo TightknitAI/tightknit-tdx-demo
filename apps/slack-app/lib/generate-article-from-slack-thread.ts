@@ -1,4 +1,5 @@
 import { SlackAPIClient } from "deno-slack-sdk/deps.ts";
+import { Env } from "deno-slack-sdk/types.ts";
 import {
   CHAT_CONTENT_EVENT_TYPE,
   IS_CHAT_CONTENT_KEY_NAME,
@@ -13,21 +14,22 @@ export type GroundingMessage = {
 /**
  * Generate an article from a Slack message thread using OpenAI
  * @param params - the params
+ * @param params.client - the Slack client
+ * @param params.env - the Slack environment variables
  * @param params.channel - the slack channel ID
  * @param params.thread_ts - the timestamp of the top-level message of the thread
- * @param params.openAiApiKey - the OpenAI API key
  * @returns - the article text
  */
 export async function generateArticleFromSlackThread({
+  client,
+  env,
   channel,
   thread_ts,
-  openAiApiKey,
-  client,
 }: {
+  client: SlackAPIClient;
   channel: string;
   thread_ts: string;
-  openAiApiKey: string;
-  client: SlackAPIClient;
+  env: Env;
 }): Promise<string | null> {
   const conversationsReplyResponse = await client.conversations.replies({
     channel,
@@ -62,7 +64,7 @@ export async function generateArticleFromSlackThread({
       }));
 
   const answer = await generateAiArticle({
-    openAiApiKey,
+    env,
     groundingMessages,
   });
 

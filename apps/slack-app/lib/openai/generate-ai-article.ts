@@ -1,3 +1,4 @@
+import { Env } from "deno-slack-sdk/types.ts";
 import { getOpenAI } from './openai.ts';
 
 export type GroundingMessage = {
@@ -8,18 +9,18 @@ export type GroundingMessage = {
 /**
  * Generate an answer for a message using OpenAI
  * @param params - the params
+ * @param params.env - the Slack environment variables
  * @param params.groundingMessages - messages from the conversation (in chronological order) to ground the AI
- * @param params.messageTimestamp - the message timestamp
- * @returns - the answer
+ * @returns - the AI-generated answer
  */
 export async function generateAiArticle({
-  openAiApiKey,
-  groundingMessages,
+  env,
+  groundingMessages
 }: {
-  openAiApiKey: string;
+  env: Env;
   groundingMessages: GroundingMessage[];
 }): Promise<string | null> {
-  const openai = getOpenAI(openAiApiKey);
+  const openai = getOpenAI(env);
 
   const systemMessage = {
     role: 'system',
@@ -32,7 +33,6 @@ export async function generateAiArticle({
   };
 
   const openAiGroundingMessages = groundingMessages.map((groundingMessage) => {
-    // const trainingMessage: ChatCompletionSystemMessageParam = {
     const trainingMessage = {
       role: 'system',
       name: groundingMessage.userIdOrName,
@@ -42,13 +42,11 @@ export async function generateAiArticle({
   });
 
 
-  const maxTokens = 400; 
   const response = await openai.chat.completions.create({
     model: 'gpt-4',
     messages: [systemMessage, ...openAiGroundingMessages],
     max_tokens: 400 // 1 token is about 4 characters
-  } as any); // TODO fix type
-
+  } as any); // TODO fix typescript typing
 
   const answer = response.choices[0].message.content;
   console.info('OpenAI answer:', answer);

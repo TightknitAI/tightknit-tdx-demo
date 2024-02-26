@@ -15,7 +15,7 @@ import ResolveTicketWorkflow from "./workflows/resolve_ticket.ts";
  * https://api.slack.com/automation/manifest
  */
 export default Manifest({
-  name: "Tightknit TDX Demo",
+  name: "Tightknit TDX Demo App",
   description:
     "A basic sample that demonstrates syncing custom support chat messages with an external source (Salesforce)",
   icon: "assets/default_new_app_icon.png",
