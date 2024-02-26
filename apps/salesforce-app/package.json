@@ -1,8 +1,8 @@
 {
-  "name": "salesforce-tightknit",
+  "name": "salesforce-app",
   "private": true,
   "version": "1.0.0",
-  "description": "Salesforce + Tightknit",
+  "description": "Salesforce App to talk to Slack",
   "scripts": {
     "build": "sf force:source:convert -d mdapioutput/",
     "tmp-disable--test": "npm run test:unit",
