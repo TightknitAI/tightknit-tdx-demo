@@ -31,7 +31,10 @@ export default Manifest({
     GenerateAiKnowledgeArticle,
     GetExternalChatInfo,
   ],
-  outgoingDomains: ["api.openai.com"],
+  outgoingDomains: [
+    "api.openai.com",
+    // TODO: Add your external domain here
+  ],
   datastores: [SalesforceAgentChatsDatastore],
   botScopes: [
     "commands",
