@@ -131,15 +131,23 @@ export default SlackFunction(
         );
       }
 
-      const openAiApiKey = env["OPENAI_API_KEY"];
-      let generatedArticle =
-        // `PLACEHOLDER! ${Math.random()} ${Math.random()} ${Math.random()}`;
+      // WARNING: Slack may kill this function if it times out (>10.0s)
+      // in which case, even if our article is generated, we won't be able to update the Slack message
+      // or post a new message with the article content...
+      // See possible planned timeout extension: https://github.com/slackapi/deno-slack-sdk/issues/227#issuecomment-1929596444
+      let generatedArticle;
+      if (env["AI_ARTICLE_PLACEHOLDER"]) {
+        // demo purposes - use a placeholder and wait
+        generatedArticle = env["AI_ARTICLE_PLACEHOLDER"];
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      } else {
         await generateArticleFromSlackThread({
-          channel: body.container.channel_id,
           client,
+          env,
+          channel: body.container.channel_id,
           thread_ts,
-          openAiApiKey,
         });
+      }
 
       if (!generatedArticle) {
         console.error("Failed to generate Knowledge article");
@@ -170,6 +178,8 @@ export default SlackFunction(
             ],
           },
         ],
+        // Fallback text to use when rich media can't be displayed (i.e. notifications) as well as for screen readers
+        text: generatedArticle,
       });
       if (!msgUpdate2.ok) {
         console.log(
@@ -187,8 +197,9 @@ export default SlackFunction(
       console.log(`Suggested article title: "${articleTitle}"`);
       console.log(`Suggested article urlName: ${articleUrlName}`);
 
+      // TODO change this to your own workflow trigger link
       const createKnowledgeArticleTriggerLink =
-        "https://slack.com/shortcuts/Ft06JEACBE3S/f04915608bd24bd5dba2d9c8e704ba39";
+        "https://slack.com/shortcuts/Ft06LE0R6ZHU/972feacf0445eadab322cdcfec938ba7";
       const msgResponse = await client.chat.postMessage({
         channel: "C06FQR45E7R", // TODO make configurable
         thread_ts,

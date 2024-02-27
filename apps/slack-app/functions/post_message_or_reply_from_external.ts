@@ -117,7 +117,7 @@ export default SlackFunction(
     let message_ts = getResponse.item.message_ts;
     // TODO change this to your own workflow trigger link
     const replyWebhookLink =
-      "https://slack.com/shortcuts/Ft06HKR8ELHK/a2793c55ddb9fb9f99ae54ae365aadbe";
+      "https://slack.com/shortcuts/Ft06M9DG12N4/de203e93fd3a4c3f5fcbaab85f9d681b";
     const replyWorkflowTriggerBlocks = [{
       type: "divider",
     }, {
