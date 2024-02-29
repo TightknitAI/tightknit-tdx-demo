@@ -3,6 +3,7 @@
     "deno-slack-hub/": "https://deno.land/x/deno_slack_hub@0.1.2/",
     "deno-slack-sdk/": "https://deno.land/x/deno_slack_sdk@2.5.0/",
     "deno-slack-api/": "https://deno.land/x/deno_slack_api@2.1.2/",
+    "std/": "https://deno.land/std@0.202.0/",
     "openai": "https://deno.land/x/openai@v4.26.1/mod.ts"
   }
 }

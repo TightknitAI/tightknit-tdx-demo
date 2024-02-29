@@ -1,5 +1,6 @@
 import { TriggerTypes } from "deno-slack-api/mod.ts";
 import { Trigger } from "deno-slack-sdk/types.ts";
+import "std/dotenv/load.ts";
 import ReceiveExternalMessageWorkflow from "../workflows/receive_message_from_external.ts";
 
 /**
@@ -16,6 +17,10 @@ const receiveExternalMessage: Trigger<
   description: "Receive a message from an external source outside of Slack",
   workflow: "#/workflows/receive_message_from_external",
   inputs: {
+    // channel id from environment variable
+    channel: {
+      value: Deno.env.get("SLACK_CHANNEL_ID")!,
+    },
     // custom inputs from body of POST webhook request
     message: {
       value: "{{data.message}}",

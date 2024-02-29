@@ -38,7 +38,7 @@ export const GenerateAiKnowledgeArticle = DefineFunction({
  */
 export default SlackFunction(
   GenerateAiKnowledgeArticle,
-  async ({ inputs, client }) => {
+  async ({ inputs, client, env }) => {
     const {
       message_ts,
     } = inputs;
@@ -72,7 +72,7 @@ export default SlackFunction(
     ];
 
     const msgResponse = await client.chat.postMessage({
-      channel: "C06FQR45E7R", // TODO make configurable
+      channel: env["SLACK_CHANNEL_ID"],
       thread_ts: message_ts,
       blocks,
       // Fallback text to use when rich media can't be displayed (i.e. notifications) as well as for screen readers
@@ -201,7 +201,7 @@ export default SlackFunction(
       const createKnowledgeArticleTriggerLink =
         "https://slack.com/shortcuts/Ft06LE0R6ZHU/972feacf0445eadab322cdcfec938ba7";
       const msgResponse = await client.chat.postMessage({
-        channel: "C06FQR45E7R", // TODO make configurable
+        channel: env["SLACK_CHANNEL_ID"],
         thread_ts,
         blocks: [
           {

@@ -4,6 +4,7 @@ import {
   TriggerTypes,
 } from "deno-slack-api/mod.ts";
 import { Trigger } from "deno-slack-sdk/types.ts";
+import "std/dotenv/load.ts";
 import ResolveTicketWorkflow from "../workflows/resolve_ticket.ts";
 
 /**
@@ -21,7 +22,7 @@ const resolvedEmojiReactAdded: Trigger<
   workflow: "#/workflows/resolve_ticket",
   event: {
     event_type: TriggerEventTypes.ReactionAdded,
-    channel_ids: ["C06FQR45E7R"],
+    channel_ids: [Deno.env.get("SLACK_CHANNEL_ID")!],
     filter: {
       version: 1,
       root: {

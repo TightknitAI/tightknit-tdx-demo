@@ -14,6 +14,10 @@ const CreateKnowledgeArticleRecordWorkflow = DefineWorkflow({
     properties: {
       // interactivity is necessary for opening a modal
       interactivity: { type: Schema.slack.types.interactivity },
+      channel: {
+        type: Schema.slack.types.channel_id,
+        description: "The Slack channel id to sync the external message to",
+      },
       thread_ts: {
         type: Schema.types.string,
       },
@@ -65,7 +69,7 @@ CreateKnowledgeArticleRecordWorkflow.addStep(
   {
     message_context: {
       message_ts: CreateKnowledgeArticleRecordWorkflow.inputs.thread_ts,
-      channel_id: "C06FQR45E7R",
+      channel_id: CreateKnowledgeArticleRecordWorkflow.inputs.channel,
     },
     message:
       `Created Knowledge Article: <${createKAVRecordStep.outputs.record_url}|${createKAVRecordStep.outputs.record_id}>`,

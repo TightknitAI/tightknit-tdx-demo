@@ -1,5 +1,6 @@
 import { TriggerContextData, TriggerTypes } from "deno-slack-api/mod.ts";
 import { Trigger } from "deno-slack-sdk/types.ts";
+import "std/dotenv/load.ts";
 import CreateKnowledgeArticleRecordWorkflow from "../workflows/create_knowledge_article_record.ts";
 
 /**
@@ -17,6 +18,7 @@ const createKnowledgeArticleLink: Trigger<
   workflow: "#/workflows/create_knowledge_article_record_workflow",
   inputs: {
     interactivity: { value: TriggerContextData.Shortcut.interactivity },
+    channel: { value: Deno.env.get("SLACK_CHANNEL_ID")! },
     thread_ts: {
       customizable: true,
     },

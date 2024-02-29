@@ -13,6 +13,10 @@ const ReceiveExternalMessageWorkflow = DefineWorkflow({
     "Receive a message from an external source and sync it as new message or threaded reply in the channel",
   input_parameters: {
     properties: {
+      channel: {
+        type: Schema.slack.types.channel_id,
+        description: "The Slack channel id to sync the external message to",
+      },
       message: {
         type: Schema.types.string,
         description: "The message to send in the channel",
@@ -46,7 +50,7 @@ const ReceiveExternalMessageWorkflow = DefineWorkflow({
 });
 
 ReceiveExternalMessageWorkflow.addStep(PostMessageOrReplyFromExternal, {
-  channel: "C06FQR45E7R",
+  channel: ReceiveExternalMessageWorkflow.inputs.channel,
   chatConversationId: ReceiveExternalMessageWorkflow.inputs.chatConversationId,
   message: ReceiveExternalMessageWorkflow.inputs.message,
   authorUsername: ReceiveExternalMessageWorkflow.inputs.authorUsername,

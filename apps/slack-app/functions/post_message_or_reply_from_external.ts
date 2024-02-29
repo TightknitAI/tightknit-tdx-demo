@@ -24,6 +24,7 @@ export const PostMessageOrReplyFromExternal = DefineFunction({
     properties: {
       channel: {
         type: Schema.slack.types.channel_id,
+        description: "The Slack channel id to sync the external message to",
       },
       chatConversationId: {
         type: Schema.types.string,
@@ -164,7 +165,7 @@ export default SlackFunction(
       console.log("chatPostMessageResponse", chatPostMessageResponse);
       if (!chatPostMessageResponse || !chatPostMessageResponse.ok) {
         const postErrorMsg =
-          `Error posting message. Contact the app maintainers with the following information - (Error detail: ${chatPostMessageResponse.error})`;
+          `Error posting message to channel ${channel}. Contact the app maintainers with the following information - (Error detail: ${chatPostMessageResponse.error})`;
         console.log(postErrorMsg);
         return { error: postErrorMsg };
       }
