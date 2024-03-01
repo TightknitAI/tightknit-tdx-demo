@@ -8,15 +8,19 @@ This is repo contains a collection of sample apps that can be deployed to create
 
 The use case presented here is a chat support ticketing system where service agents on Slack are able to communicate with end users on your Salesforce website, using AI to generate Knowledge Articles from the information capture in the resolved conversation.
 
+## Watch a Demo
+
+_Coming soon!_
+
 ## Using this example
 
 ### Slack
 
-Follow the instructions [here]() to setup and deploy your Next-Gen Slack app.
+Follow the instructions [here](../apps/slack-app/README.md) to setup and deploy your Next-Gen Slack app.
 
 ### Salesforce
 
-Follow the instructions [here]() to setup and deploy your Salesforce custom objects, LWR digital experience site, and LWC.
+Follow the instructions [here](../apps/salesforce-app/README.md) to setup and deploy your Salesforce custom objects, LWR digital experience site, and LWC.
 
 ## Useful Links
 
