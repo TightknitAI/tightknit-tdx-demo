@@ -1,14 +1,24 @@
-# AI + Slack + Experience Sites
+# Chat Component with Experience Sites and Slack
 
 This repo contains the Tightknit TDX Demo app for an LWC on Salesforce Experience Cloud sites that syncs chat messages with Slack.
 
 ## Overview
 
-Polls custom object
+Within the `salesforce-app` directory is a [Metadata API](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_intro.htm) package that contains the following items:
+
+- `ChatConversation__c`: custom object that represents a chat conversation
+- `ChatMessage__c`: custom object that represents an individual chat message
+- `ChatController.cls`: custom Apex class for retrieving `ChatMessage__c` records
+- `KnowledgeArticleSearch.cls`: custom Apex class for search for a given search term through the org's Knowledge articles
+- `questionAndEscalation` (_"Question And Escalation" component_): LWC custom component for Experience Cloud sites that offers users to search articles for their questions or talk to a support agent (on the Slack side)
+
+The `questionAndEscalation` initially presents the user with a question box in which they can enter a search term. The component performs a search through the org's Knowledge articles and presents the results.
+
+The user has the option to "Talk to Support" and switch the UI to a chat window. Each time the user enters a message, the component sends a POST request to the Slack app's webhook URL, as well as creates a `ChatMessage__c` record in Salesforce. On the Slack side, the companion app will be creating `ChatMessage__c` record in Salesforce too. The `questionAndEscalation` component constantly polls Salesforce for all of the `ChatMessage__c` records for the conversation and updates the chat window accordingly. Thus, the `ChatMessage__c` records serve as the backend source of truth for the chat.
 
 ## Setup
 
-Ripe for contribution
+To be transparent, most of the manual setup listed here could be migrated into the actual [Metadata API](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_intro.htm) package in order to be deployed programmatically. But we ran out of time. Thus, this area is ripe for update if you would like to contribute! 😀
 
 ### Experience Cloud Site
 
@@ -16,6 +26,8 @@ Ripe for contribution
 1. Allowlist the URLs related to the companion [Slack app](../slack-app/README.md) (i.e. CSP of site, Trusted Sites, or Remote Site Settings), including:
    1. the webhook URL of the **[Receive a message](../slack-app/README.md)** Slack trigger
    1. domain(s) that Slack profile images may be hosted on, e.g. https://avatars.slack-edge.com
+1. Open the Experience Builder > add the _"Question And Escalation"_ custom component to your desired page.
+   1. Configure the _"Slack App Webhook URL"_ property of the component to use the **Receive a message** webhook URL of the companion [Slack app](../slack-app/README.md).
 
 #### Guest User (optional)
 
@@ -75,21 +87,15 @@ Guide: https://help.salesforce.com/s/articleView?id=sf.knowledge_add_knowledge_a
 
 ## Develop
 
-### Org / Experience Setup
-
-#### Developer Org
-
 ### Local Setup
 
-Download the Salesforce CLI: https://developer.salesforce.com/tools/salesforcecli
-
-#### VS Code
+Guide: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm
 
 Open a new VS Code window at this directory.
 
-##### Authorize
+### Authorize Your Org
 
-Download the following extensions:
+Download the following VS Code extensions:
 
 1. Salesforce Extension Pack
 2. Salesforce CLI Integration
@@ -97,17 +103,13 @@ Download the following extensions:
 Open Command Palette (Ctrl+Shift+P):
 
 - Select "> SFDX: Authorize an Org"
-- Select "sandbox"
-- Enter an org alias name.
 - Log in to the org to authorize
 
-##### Deploy
+### Deploy Package to Your Org
 
-Right-click any directory of the Salesforce project in the Explorer and select "SFDX: Deploy Source to Org"
+Right-click any directory of the Salesforce project in the Explorer and select "SFDX: Deploy Source to Org".
 
-#### Salesforce CLI
-
-##### Authorize
+Alternatively, you can use the Salesforce CLI:
 
 ```sh
 # authorize the org
@@ -116,31 +118,17 @@ sfdx org:login:web --alias <ALIAS> --set-default
 sfdx force:config:set defaultusername=<USERNAME>
 # confirm your orgs
 sfdx force:org:list
-```
 
-##### Deploy
-
-```sh
 # the -u is optional for default org
 sfdx force:source:convert -d mdapioutput/
 sfdx force:mdapi:deploy -d mdapioutput/ -w 100 -u <USERNAME>
 ```
 
-## Salesforce DX Project: Next Steps
-
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
-
-### How Do You Plan to Deploy Your Changes?
-
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
-
-### Configure Your Salesforce DX Project
-
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
-
-### Read All About It
+## Resources
 
 - [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
 - [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
 - [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
 - [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+- [Salesforce Lightning Web Components (LWC)](https://developer.salesforce.com/developer-centers/lightning-web-components)
+- [lightning/uiRecordApi wire adapter (LWC)](https://developer.salesforce.com/docs/platform/lwc/guide/reference-lightning-ui-api-record.html)

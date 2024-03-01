@@ -12,6 +12,12 @@ It contains the following triggers...
 - **Create Knowledge Article (link)**: A shortcut trigger through which a user can click to generate a Knowledge Article in Salesforce
 - **Emoji react added**: An event trigger that listens for ✅ emoji reactions added to "resolved conversations," and kicks off a workflow to suggest AI-generated articles from the information in the conversation
 
+When a caller (on the Salesforce side) hits the **Receive a message** webhook trigger, the app starts a thread in a specified channel. Information about this chat is stored in the Slack datastore. Any further incoming messages associated with this chat are added to the same Slack thread.
+
+The support agent in Slack may start the **Reply to external chat (link)** shortcut trigger to respond back to the customer (to the Salesforce side). The workflow creates a `ChatMessage__c` custom object record representing the message in Salesforce.
+
+When the conversation is resolved, the agent may use the ✅ emoji reaction to trigger the final workflow, which will send the conversation to OpenAI and prompt it to create an article based on the learnings. The agent will be prompted to save the article as a Knowledge Article record in Salesforce, using the **Create Knowledge Article (link)** shortcut trigger.
+
 ## Setup
 
 Before getting started, first make sure you have a development Slack workspace where
