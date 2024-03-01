@@ -32,7 +32,6 @@ export default class QuestionAndEscalation extends NavigationMixin(
   })
   wiredUser({ error, data }) {
     if (data) {
-      console.log("WIREDUSER: ", data);
       this.currentUserName = getFieldValue(data, USER_NAME_FIELD);
       this.currentUserId = data.id;
     } else if (error) {

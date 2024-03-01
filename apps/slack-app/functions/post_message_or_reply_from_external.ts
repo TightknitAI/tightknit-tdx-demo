@@ -105,11 +105,9 @@ export default SlackFunction(
       datastore: SalesforceAgentChatsDatastore.name,
       id: chatConversationId,
     });
-    console.log("getResponse", getResponse);
 
     if (!getResponse.ok) {
-      const getErrorMsg =
-        `Error retrieving conversation history in datastore. Contact the app maintainers with the following information - (Error detail: ${getResponse.error})`;
+      const getErrorMsg = `Error retrieving conversation history in datastore. Contact the app maintainers with the following information - (Error detail: ${getResponse.error})`;
       console.log(getErrorMsg);
       return { error: getErrorMsg };
     }
@@ -118,25 +116,28 @@ export default SlackFunction(
     // TODO change this to your own workflow trigger link
     const replyWebhookLink =
       "https://slack.com/shortcuts/Ft06M9DG12N4/de203e93fd3a4c3f5fcbaab85f9d681b";
-    const replyWorkflowTriggerBlocks = [{
-      type: "divider",
-    }, {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": "_Send reply to external chat_",
+    const replyWorkflowTriggerBlocks = [
+      {
+        type: "divider",
       },
-      "accessory": {
-        "type": "button",
-        "text": {
-          "type": "plain_text",
-          "text": "Reply",
-          "emoji": true,
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "_Send reply to external chat_",
         },
-        // webhook URL to trigger the reply_to_external_chat_workflow
-        "url": replyWebhookLink,
+        accessory: {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "Reply",
+            emoji: true,
+          },
+          // webhook URL to trigger the reply_to_external_chat_workflow
+          url: replyWebhookLink,
+        },
       },
-    }];
+    ];
 
     // 2. If not tracked, create a new conversation in the datastore
     // and send a new message in channel
@@ -152,19 +153,17 @@ export default SlackFunction(
         text: message,
         blocks: [
           {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": formattedMessage,
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: formattedMessage,
             },
           },
           ...replyWorkflowTriggerBlocks,
         ],
       });
-      console.log("chatPostMessageResponse", chatPostMessageResponse);
       if (!chatPostMessageResponse || !chatPostMessageResponse.ok) {
-        const postErrorMsg =
-          `Error posting message. Contact the app maintainers with the following information - (Error detail: ${chatPostMessageResponse.error})`;
+        const postErrorMsg = `Error posting message. Contact the app maintainers with the following information - (Error detail: ${chatPostMessageResponse.error})`;
         console.log(postErrorMsg);
         return { error: postErrorMsg };
       }
@@ -183,8 +182,7 @@ export default SlackFunction(
       });
 
       if (!putResponse.ok) {
-        const saveErrorMsg =
-          `Error saving draft announcement. Contact the app maintainers with the following information - (Error detail: ${putResponse.error})`;
+        const saveErrorMsg = `Error saving draft announcement. Contact the app maintainers with the following information - (Error detail: ${putResponse.error})`;
         console.log(saveErrorMsg);
         return { error: saveErrorMsg };
       }
@@ -200,18 +198,17 @@ export default SlackFunction(
         text: message,
         blocks: [
           {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": formattedMessage,
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: formattedMessage,
             },
           },
           ...replyWorkflowTriggerBlocks,
         ],
       });
       if (!chatPostMessageResponse || !chatPostMessageResponse.ok) {
-        const postErrorMsg =
-          `Error posting threaded reply to message "${message_ts}". Contact the app maintainers with the following information - (Error detail: ${chatPostMessageResponse.error})`;
+        const postErrorMsg = `Error posting threaded reply to message "${message_ts}". Contact the app maintainers with the following information - (Error detail: ${chatPostMessageResponse.error})`;
         console.log(postErrorMsg);
         return { error: postErrorMsg };
       }
@@ -221,5 +218,5 @@ export default SlackFunction(
     return {
       outputs: { channel, chatConversationId, message },
     };
-  },
+  }
 );

@@ -1,6 +1,5 @@
 import { Env } from "deno-slack-sdk/types.ts";
-import OpenAI from "openai"; // deno openai build bug (open): https://github.com/denoland/deno/issues/22109#issuecomment-1912240324
-
+import OpenAI from "openai";
 
 let openaiInstance: OpenAI;
 
@@ -11,11 +10,11 @@ let openaiInstance: OpenAI;
  */
 function initializeOpenAISingleton(env: Env) {
   if (!openaiInstance) {
-    openaiInstance = new OpenAI({ 
+    openaiInstance = new OpenAI({
       baseURL: env["OPENAI_BASE_URL"],
       apiKey: env["OPENAI_API_KEY"],
       organization: env["OPENAI_ORG_ID"],
-     });
+    });
   }
 }
 

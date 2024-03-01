@@ -7,6 +7,12 @@ public with sharing class KnowledgeArticleSearch {
         @AuraEnabled public String snippet;
     }
 
+    /**
+     * Perform a Knowledge search using SOSL.
+     * All text-based fields are included in search by default, so the name(s) of your custom fields on the Knowledge object should not matter.
+     * @param searchTerm The search term to use
+     * @return A list of ArticleSearchResult objects containing the search results
+     */
     @AuraEnabled(Cacheable=true)
     public static Object performKnowledgeSearch(String searchTerm) {
         Search.SearchResults soslSearchResults = Search.find('FIND \'' + searchTerm + '\' IN ALL FIELDS RETURNING Knowledge__kav (Id, Title, UrlName WHERE PublishStatus = \'Online\' AND Language = \'en_US\') WITH SNIPPET (target_length=120)');
