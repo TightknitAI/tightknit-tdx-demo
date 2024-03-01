@@ -45,18 +45,17 @@ const createKAVRecordStep = CreateKnowledgeArticleRecordWorkflow.addStep(
     salesforce_object_name: "Knowledge__kav",
     // Metadata to attach to this record, as an array of keys and their values values. Each key should be associated with the API name of a field you want to provide a value for.
     metadata: {
-      "Title": CreateKnowledgeArticleRecordWorkflow.inputs.article_title,
-      "UrlName": CreateKnowledgeArticleRecordWorkflow.inputs.article_url_name,
+      Title: CreateKnowledgeArticleRecordWorkflow.inputs.article_title,
+      UrlName: CreateKnowledgeArticleRecordWorkflow.inputs.article_url_name,
 
-      "Description__c":
-        CreateKnowledgeArticleRecordWorkflow.inputs.article_body,
+      Description__c: CreateKnowledgeArticleRecordWorkflow.inputs.article_body,
       // "IsVisibleInApp": true,
       // "IsVisibleInPkb": true,
       // "PublishStatus": "Draft",
       // "Language": "en_US",
     },
     salesforce_access_token: { credential_source: "END_USER" },
-  },
+  }
 );
 
 // Send notification of new record in the thread
@@ -65,11 +64,10 @@ CreateKnowledgeArticleRecordWorkflow.addStep(
   {
     message_context: {
       message_ts: CreateKnowledgeArticleRecordWorkflow.inputs.thread_ts,
-      channel_id: "C06FQR45E7R",
+      channel_id: "C06FQR45E7R", // TODO make configurable
     },
-    message:
-      `Created Knowledge Article: <${createKAVRecordStep.outputs.record_url}|${createKAVRecordStep.outputs.record_id}>`,
-  },
+    message: `Created Knowledge Article: <${createKAVRecordStep.outputs.record_url}|${createKAVRecordStep.outputs.record_id}>`,
+  }
 );
 
 export default CreateKnowledgeArticleRecordWorkflow;

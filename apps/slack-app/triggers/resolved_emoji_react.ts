@@ -21,7 +21,7 @@ const resolvedEmojiReactAdded: Trigger<
   workflow: "#/workflows/resolve_ticket",
   event: {
     event_type: TriggerEventTypes.ReactionAdded,
-    channel_ids: ["C06FQR45E7R"],
+    channel_ids: ["C06FQR45E7R"], // TODO make configurable
     filter: {
       version: 1,
       root: {

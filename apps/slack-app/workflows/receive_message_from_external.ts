@@ -46,7 +46,7 @@ const ReceiveExternalMessageWorkflow = DefineWorkflow({
 });
 
 ReceiveExternalMessageWorkflow.addStep(PostMessageOrReplyFromExternal, {
-  channel: "C06FQR45E7R",
+  channel: "C06FQR45E7R", // TODO make configurable
   chatConversationId: ReceiveExternalMessageWorkflow.inputs.chatConversationId,
   message: ReceiveExternalMessageWorkflow.inputs.message,
   authorUsername: ReceiveExternalMessageWorkflow.inputs.authorUsername,
