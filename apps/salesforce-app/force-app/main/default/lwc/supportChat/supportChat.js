@@ -32,7 +32,6 @@ export default class SupportChat extends LightningElement {
     this.getChatMessagesResult = result;
     const { data, error } = result;
     if (data) {
-      console.log("wiredApexChatMessages: ", data);
       // sort messages by send date
       let sortedData = [...data];
       sortedData.sort((a, b) => {
@@ -58,7 +57,6 @@ export default class SupportChat extends LightningElement {
   })
   wiredUser({ error, data }) {
     if (data) {
-      console.log("WIREDUSER: ", data);
       this.currentUserName =
         getFieldValue(data, USER_NAME_FIELD) || "Guest User";
       this.currentUserPhotoUrl = getFieldValue(data, USER_PHOTO_URL_FIELD)
@@ -77,7 +75,6 @@ export default class SupportChat extends LightningElement {
   })
   wiredChatConversation({ data, error }) {
     if (data) {
-      console.log("WIREDCHATCONVERSATION: ", data);
       this.initialQuery = getFieldValue(
         data,
         CHAT_CONVERSATION_INITIAL_QUERY_FIELD
@@ -207,7 +204,6 @@ export default class SupportChat extends LightningElement {
       mode: "no-cors",
       body: JSON.stringify(data) // Convert data to JSON format
     };
-    console.log("Sending data: ", data);
 
     // Make the POST request using the fetch API
     fetch(this.slackAppWebhookUrl, options)

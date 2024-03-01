@@ -42,7 +42,6 @@ export default class QuestionBox extends NavigationMixin(LightningElement) {
     this.isLoading = true;
     performKnowledgeSearch({ searchTerm: this.searchTerm })
       .then((result) => {
-        console.log("Search results:", result);
         this.searchResults = result;
         this.isDataLoaded = true;
         this.isLoading = false;
