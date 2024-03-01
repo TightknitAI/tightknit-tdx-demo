@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a sample app built on the [Slack Next-Gen automation platform](https://api.slack.com/start#next-gen-platform) for syncing a chat conversation between a service agent in Slack and a customer on an external source (i.e. Salesforce digital experience site).
+This repo contains the Tightknit TDX Demo sample app built on the [Slack Next-Gen automation platform](https://api.slack.com/start#next-gen-platform) for syncing a chat conversation between a service agent in Slack and a customer on an external source (i.e. Salesforce Experience Cloud site).
 
 It contains the following triggers...
 

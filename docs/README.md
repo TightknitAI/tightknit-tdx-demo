@@ -20,7 +20,7 @@ Follow the instructions [here](../apps/slack-app/README.md) to setup and deploy 
 
 ### Salesforce
 
-Follow the instructions [here](../apps/salesforce-app/README.md) to setup and deploy your Salesforce custom objects, LWR digital experience site, and LWC.
+Follow the instructions [here](../apps/salesforce-app/README.md) to setup and deploy your Salesforce custom objects, LWR Experience Cloud site, and LWC.
 
 ## Useful Links
 
