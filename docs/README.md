@@ -2,7 +2,7 @@
 
 _Adding Slack and AI to Experience Cloud Communities_
 
-This is repo contains a collection of sample apps that can be deployed to create a simple chat messaging system between a Lightning Web Component (LWC) on an Salesforce Digital Experience site and a Slack Next-Gen App, backed by a custom object within your Salesforce org.
+This repo contains a collection of sample apps that can be deployed to create a simple chat messaging system between a Lightning Web Component (LWC) on an Salesforce Digital Experience site and a Slack Next-Gen App, backed by a custom object within your Salesforce org.
 
 ![App Architecture](./images/demo_architecture.png)
 
