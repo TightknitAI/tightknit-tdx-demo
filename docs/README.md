@@ -1,4 +1,4 @@
-![Adding Slack and AI to Experience Cloud Communities](./images/tightknit_tdx_poster.png)
+![Adding Slack and AI to Experience Cloud Communities](./images/tightknit_tdx_banner.png)
 
 ## TDX 2024 - Demo
 
