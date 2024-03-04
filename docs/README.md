@@ -35,7 +35,7 @@ Learn more about the apps and components in this repo:
 - [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat)
 
 <!----------------------------------------------------------------------------->
-[Link]: # 'Link with example title.'
+[Link]: https://community.tightknit.ai/join
 
 <!---------------------------------[ Buttons ]--------------------------------->
 [Button Icon]: https://img.shields.io/badge/Join_the_community-37a779?style=for-the-badge&logoColor=white&logo=Slack
