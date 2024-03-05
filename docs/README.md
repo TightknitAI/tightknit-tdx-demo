@@ -1,8 +1,10 @@
-# Tightknit TDX Demo
+![Adding Slack and AI to Experience Cloud Communities](./images/tightknit_tdx_banner.png)
 
-_Adding Slack and AI to Experience Cloud Communities_
+## TDX 2024 - Demo
 
-This repo contains a collection of sample apps that can be deployed to create a simple chat messaging system between a Lightning Web Component (LWC) on an Salesforce Digital Experience site and a Slack Next-Gen App, backed by a custom object within your Salesforce org.
+[![Button Icon]][Link]
+
+This repo contains a collection of sample apps that can be deployed to create a simple chat messaging system between a Lightning Web Component (LWC) on a Salesforce Digital Experience site and a Slack Next Gen App, backed by a custom object within your Salesforce org.
 
 ![App Architecture](./images/demo_architecture.png)
 
@@ -10,7 +12,7 @@ The use case presented here is a chat support ticketing system where service age
 
 ## Watch a Demo
 
-_Coming soon!_
+*Coming soon!*
 
 ## Using this example
 
@@ -31,3 +33,9 @@ Learn more about the apps and components in this repo:
 - [Salesforce Lightning Web Components (LWC)](https://developer.salesforce.com/developer-centers/lightning-web-components)
 - [lightning/uiRecordApi wire adapter (LWC)](https://developer.salesforce.com/docs/platform/lwc/guide/reference-lightning-ui-api-record.html)
 - [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat)
+
+<!----------------------------------------------------------------------------->
+[Link]: https://community.tightknit.ai/join
+
+<!---------------------------------[ Buttons ]--------------------------------->
+[Button Icon]: https://img.shields.io/badge/Join_the_community-37a779?style=for-the-badge&logoColor=white&logo=Slack
