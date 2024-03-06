@@ -1,4 +1,3 @@
-
 export type GroundingMessage = {
   userIdOrName: string;
   text: string;
@@ -10,22 +9,20 @@ export type GroundingMessage = {
  * @param params.text - the text to generate the article url slug from
  * @returns - the article url name (i.e. slug)
  */
-export function getArticleUrlNameFromText({
-  text
-}: {
-  text: string;
-}): string {
+export function getArticleUrlNameFromText({ text }: { text: string }): string {
   if (!text) {
     throw new Error("No text provided to generate article url name from");
   }
 
   // convert to only alphanumeric characters separated by hyphens
-  const articleUrlName = text
+  let articleUrlName = text
     .substring(0, 70) // limit to 70 chars
     .replace(/[^a-zA-Z0-9\s]/g, "")
     .replace(/\s+/g, "-")
     .replace(/^-+|-+$/g, ""); // Remove leading and trailing hyphens
-    
+
+  articleUrlName += `-${Date.now()}`; // add a random string (unix ts) to the end to ensure uniqueness of article URL
+
   return articleUrlName;
 }
 
@@ -35,11 +32,7 @@ export function getArticleUrlNameFromText({
  * @param params.text - the text to generate the article title from
  * @returns - the article title
  */
-export function getArticleTitleFromText({
-  text
-}: {
-  text: string;
-}): string {
+export function getArticleTitleFromText({ text }: { text: string }): string {
   if (!text) {
     throw new Error("No text provided to generate article title name from");
   }
@@ -49,7 +42,12 @@ export function getArticleTitleFromText({
   const articleTitle = text
     .substring(0, 100)
     // a newline in the latter half of the string is a good logical cutoff, if present
-    .substring(0, text.substring(50, 100).indexOf("\n") >= 0  ? text.substring(50, 100).indexOf("\n") + 50 : text.length) 
+    .substring(
+      0,
+      text.substring(50, 100).indexOf("\n") >= 0
+        ? text.substring(50, 100).indexOf("\n") + 50
+        : text.length
+    )
     .replace(/\s+/g, " ");
   return articleTitle;
 }
