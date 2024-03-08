@@ -4,11 +4,11 @@
 
 [![Button Icon]][Link]
 
-This repo contains a collection of sample apps that can be deployed to create a simple chat messaging system between a Lightning Web Component (LWC) on a Salesforce Digital Experience site and a Slack Next Gen App, backed by a custom object within your Salesforce org.
+This repo contains a collection of sample apps that can be deployed to create a simple chat system between a Lightning Web Component (LWC) on a Salesforce Experience Cloud site and a Slack Next-Gen App, backed by a custom object within your Salesforce org.
 
 ![App Architecture](./images/demo_architecture.png)
 
-The use case presented here is a chat support ticketing system where service agents on Slack are able to communicate with end users on your Salesforce website, using AI to generate Knowledge Articles from the information capture in the resolved conversation.
+The use case presented here is a customer support ticketing system where service agents on Slack are able to communicate with end users on your Salesforce website, using AI to generate Knowledge Articles from the information capture in the conversation when the ticket is resolved.
 
 ## Watch the Demo
 
