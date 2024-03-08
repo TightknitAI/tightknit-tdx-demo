@@ -7,14 +7,14 @@ This repo contains the Tightknit TDX Demo app for an LWC on Salesforce Experienc
 Within the `salesforce-app` directory is a [Metadata API](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_intro.htm) package that contains the following items:
 
 - `ChatConversation__c`: custom object that represents a chat conversation
-- `ChatMessage__c`: custom object that represents an individual chat message
+- `ChatMessage__c`: custom object that represents an individual chat message in a conversation
 - `ChatController.cls`: custom Apex class for retrieving `ChatMessage__c` records
-- `KnowledgeArticleSearch.cls`: custom Apex class for search for a given search term through the org's Knowledge articles
-- `questionAndEscalation` (_"Question And Escalation" component_): LWC custom component for Experience Cloud sites that offers users to search articles for their questions or talk to a support agent (on the Slack side)
+- `KnowledgeArticleSearch.cls`: custom Apex class for searching a given search term in the org's Knowledge Articles
+- `questionAndEscalation` (_"Question And Escalation" component_): LWC custom component for Experience Cloud sites that offers users to search articles for their questions or talk to a customer support agent ([on the Slack side](../slack-app/README.md))
 
-The `questionAndEscalation` initially presents the user with a question box in which they can enter a search term. The component performs a search through the org's Knowledge articles and presents the results.
+The `questionAndEscalation` component initially presents the user with a question box in which they can enter a search term. The component performs a search through the org's Knowledge Articles and presents the deflection results.
 
-The user has the option to "Talk to Support" and switch the UI to a chat window. Each time the user enters a message, the component sends a POST request to the Slack app's webhook URL, as well as creates a `ChatMessage__c` record in Salesforce. On the Slack side, the companion app will be creating `ChatMessage__c` record in Salesforce too. The `questionAndEscalation` component constantly polls Salesforce for all of the `ChatMessage__c` records for the conversation and updates the chat window accordingly. Thus, the `ChatMessage__c` records serve as the backend source of truth for the chat.
+The user may click "Talk to Support" and switch to a chat window. Each time the user enters a message, the component sends a POST request to the [companion Slack app's](../slack-app/README.md) webhook URL, as well as creates a `ChatMessage__c` record in Salesforce. The companion Slack app will be creating `ChatMessage__c` records in Salesforce as well. The `questionAndEscalation` component constantly polls Salesforce for all of the `ChatMessage__c` records for the conversation and updates the chat window accordingly. Thus, the `ChatMessage__c` records serve as the backend source of truth for the chat.
 
 ## Setup
 

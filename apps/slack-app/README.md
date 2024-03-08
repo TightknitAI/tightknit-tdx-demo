@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repo contains the Tightknit TDX Demo sample app built on the [Slack Next-Gen automation platform](https://api.slack.com/start#next-gen-platform) for syncing a chat conversation between a service agent in Slack and a customer on an external source (i.e. Salesforce Experience Cloud site).
+This repo contains the Tightknit TDX Demo sample app built on the [Slack Next-Gen automation platform](https://api.slack.com/start#next-gen-platform) for syncing a chat conversation between a service agent in Slack and a customer on an external source (i.e. [Salesforce Experience Cloud site](../salesforce-app/README.md)).
 
 It contains the following triggers...
 
@@ -12,11 +12,11 @@ It contains the following triggers...
 - **Create Knowledge Article (link)**: A shortcut trigger through which a user can click to generate a Knowledge Article in Salesforce
 - **Emoji react added**: An event trigger that listens for ✅ emoji reactions added to "resolved conversations," and kicks off a workflow to suggest AI-generated articles from the information in the conversation
 
-When a caller (on the Salesforce side) hits the **Receive a message** webhook trigger, the app starts a thread in a specified channel. Information about this chat is stored in the Slack datastore. Any further incoming messages associated with this chat are added to the same Slack thread.
+When a caller (external to Slack) hits the endpoint of the **Receive a message** webhook trigger, the app starts a thread in the specified channel. Metadata about this chat object is stored in the Slack datastore. Any further incoming messages associated with this chat are added to the same Slack thread.
 
-The support agent in Slack may start the **Reply to external chat (link)** shortcut trigger to respond back to the customer (to the Salesforce side). The workflow creates a `ChatMessage__c` custom object record representing the message in Salesforce.
+The support agent in Slack may start the **Reply to external chat (link)** shortcut trigger to respond back to the customer (outside of Slack). The workflow creates a `ChatMessage__c` custom object record representing the message in Salesforce.
 
-When the conversation is resolved, the agent may use the ✅ emoji reaction to trigger the final workflow, which will send the conversation to OpenAI and prompt it to create an article based on the learnings. The agent will be prompted to save the article as a Knowledge Article record in Salesforce, using the **Create Knowledge Article (link)** shortcut trigger.
+Once the ticket is resolved, the agent may use the ✅ emoji reaction on the thread to trigger the final workflow, which will send the conversation to OpenAI and prompt it to create an article based on the learnings. The agent will be able to save the result as a Knowledge Article record in Salesforce, using the **Create Knowledge Article (link)** shortcut trigger.
 
 ## Setup
 
@@ -92,8 +92,9 @@ Restart/re-deploy the app.
 ## Wishlist
 
 - Move the configurable channel ID (see above) into the environment variables ([thread](https://community.slack.com/archives/C02C28Z3XA7/p1708984029721039))
+- _Slack_: Programatically get the link for the trigger of a workflow (in your manifest), to support one workflow directly starting another link-type workflow.
 - _Slack_: Make it less cumbersome for users to repeatedly trigger workflows with authenticated [Connector functions](https://api.slack.com/automation/connectors). Currently it takes at least 3 clicks to start the workflow.
-- _Slack_: Add support for using a link trigger for workflows containing an `END_USER` credential source Connector function.
+- _Slack_: Add support for using an event trigger for workflows containing an `END_USER` credential source Connector function. Alternatively, support `DEVELOPER` as a `credential_source` for the built-in Salesforce connector function.
 
 ## Resources
 
